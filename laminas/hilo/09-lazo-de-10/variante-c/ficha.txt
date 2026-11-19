@@ -1,0 +1,14 @@
+Taller de Lacería · ficha del diseño
+Retícula: Girih · decágonos, pentágonos y rombos
+Procedencia: Composición periódica de piezas girih, encontrada por el buscador del Taller de Lacería a partir de las cinco piezas descritas por Lu y Steinhardt (2007).
+Red de repetición: T1 = (-2.9271, -0.9511), T2 = (1.3090, -4.0287)
+Ángulo de contacto: θ = 54°
+Decoración: método de polígonos en contacto (líneas desde el punto medio de cada lado con el ángulo θ). En las piezas irregulares, cada línea se une con la primera que encuentra de frente.
+Fuentes del método:
+  · E. H. Hankin (1925), The Drawing of Geometric Patterns in Saracenic Art, Memoirs of the Archaeological Survey of India, 15.
+  · C. S. Kaplan (2005), Islamic Star Patterns from Polygons in Contact, Graphics Interface 2005.
+  · P. J. Lu y P. J. Steinhardt (2007), Decagonal and Quasi-Crystalline Tilings in Medieval Islamic Architecture, Science, 315.
+Datos de terceros: ninguno.
+Herramienta: diseño creado con el Taller de Lacería, desarrollado con ayuda de una IA (Claude, de Anthropic).
+Código del diseño: LAC1.eyJ0IjoiRy1kcHIiLCJhIjo1NCwicHAiOjAsImFuIjp7fSwiZCI6MCwic2MiOjU1LjI2MTkzMjU4ODA0MTI1NSwiciI6NzIsInB4Ijo3MiwicHkiOi01MywicyI6MCwidyI6NywiZiI6MCwiZyI6MCwicGwiOiJpc2ZhaGFuIiwiYyI6e30sInJvIjowLCJycyI6MC42LCJwcyI6MC42LCJhYyI6MSwiYXMiOjEsImoiOiJtaXRlciIsIm8iOjAuMjIsInBiIjpbXX0
+Fecha: 19 de noviembre de 2026

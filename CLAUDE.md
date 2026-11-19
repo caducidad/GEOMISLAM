@@ -19,7 +19,9 @@ El autor ha delegado en Claude la elección y el afinado de las láminas y la co
 - Formato A4 vertical, margen de 10 mm. Escala de referencia: celda de unos 62 mm (más grande en los lazos de muchas puntas).
 - Grosor mínimo de línea impresa: 0,25 mm.
 - Piezas para colorear: diámetro equivalente de 4–5 mm como mínimo.
-- Órdenes de simetría construibles con regla y compás (4, 6, 8, 10, 12, 16…), para que el Movimiento III se pueda hacer de verdad. Evitar 7, 9, 11, 18.
+- Órdenes de simetría construibles con regla y compás (4, 6, 8, 10, 12, 15, 16, 20, 24…), para que el Movimiento III se pueda hacer de verdad. Evitar 7, 9, 11, 18.
+- Patrón evidente: retícula alineada con la página, estrella principal en posiciones previsibles y la celda repetida varias veces a lo ancho. Si un diseño no se lee, se compone (escala, giro, encuadre, color) o se ofrecen variantes; no se descarta.
+- Si quedan astillas por debajo del mínimo coloreable, se engrosa la cinta hasta taparlas.
 - Cada lámina se guarda con su `lamina.svg` (por capas), `diseno.txt` (código `LAC1…`) y `ficha.txt` (procedencia).
 
 ## Documentos de referencia

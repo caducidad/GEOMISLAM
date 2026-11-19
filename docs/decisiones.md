@@ -24,6 +24,15 @@ Mirar, Repetir, Reconstruir y Crear. Dentro de cada movimiento solo cambia una c
 
 Se descartó ordenar el libro por tipos de simetría: la dificultad para el lector depende más de la ayuda que recibe que del tipo de simetría.
 
+## Cien láminas
+El libro tendrá unas 100 láminas: doce láminas hilo que aparecen al menos tres veces cada una y unas 64 de acompañamiento, emparentadas con las hilo (misma retícula con otro ángulo, separación, rosetas o doble trazo). Así el volumen no se consigue repitiendo, sino mostrando familias, y el lector descubre que el mismo esqueleto con otro ángulo da otro lazo.
+
+## Patrones evidentes
+Todos los diseños deben ser visiblemente simétricos y previsibles: el lector tiene que ver de un vistazo cómo se repiten. No se descarta ningún tipo de lazo (grandes ruedas, girih, retículas propias): se compone cada uno para que su repetición se lea (escala, giro, encuadre centrado en la estrella principal, color). Cuando hay dudas, se ofrecen variantes al autor.
+
+## Cinta más ancha en las grandes ruedas
+Las ruedas de 16 y 20 puntas dejan astillas finísimas entre líneas. En lugar de descartarlas, la cinta se engrosa hasta taparlas, que es también la solución tradicional.
+
 ## Una sola página por lámina
 No hay pareja de página de referencia y página en gris. La misma lámina se aprovecha varias veces (primero la forma, luego el color). Las soluciones van en miniatura al final.
 

@@ -1,0 +1,13 @@
+Taller de Lacería · ficha del diseño
+Retícula: Cuadrados · 4.4.4.4
+Procedencia: Retícula clásica de polígonos regulares (teselación regular o arquimediana), de dominio público.
+Red de repetición: T1 = (1.0000, 0.0000), T2 = (0.0000, 1.0000)
+Ángulo de contacto: θ = 67.5°
+Decoración: método de polígonos en contacto (líneas desde el punto medio de cada lado con el ángulo θ).
+Fuentes del método:
+  · E. H. Hankin (1925), The Drawing of Geometric Patterns in Saracenic Art, Memoirs of the Archaeological Survey of India, 15.
+  · C. S. Kaplan (2005), Islamic Star Patterns from Polygons in Contact, Graphics Interface 2005.
+Datos de terceros: ninguno.
+Herramienta: diseño creado con el Taller de Lacería, desarrollado con ayuda de una IA (Claude, de Anthropic).
+Código del diseño: LAC1.eyJ0IjoiNC40LjQuNCIsImEiOjY3LjUsInBwIjowLCJhbiI6e30sImQiOjAsInNjIjoxNTEuMTgxMTAyMzYyMjA0NzQsInIiOjAsInB4IjotNzYsInB5IjotNzYsInMiOjAsInciOjcsImYiOjAsImciOjAsInBsIjoiZmV6IiwiYyI6e30sInJvIjowLCJycyI6MC42LCJwcyI6MC42LCJhYyI6MSwiYXMiOjEsImoiOiJtaXRlciIsIm8iOjAuMjIsInBiIjpbXX0
+Fecha: 19 de noviembre de 2026
