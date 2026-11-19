@@ -23,27 +23,35 @@ Los diseños difíciles de leer (grandes ruedas, girih de 10, retículas propias
 | 4 | Lazo de 8 | Octógonos y cuadrados | 3 | 3,8 | 10,8 mm | La estrella emblemática; la primera estrella secundaria |
 | 5 | Lazo de 12 | Dodecágonos y triángulos | 3 | 6,1 | 6,0 mm | Más puntas, mismas piezas |
 | 6 | Lazo de 12, 6 y 4 | Dodecágonos, hexágonos y cuadrados | 4 | 6,1 | 6,8 mm | Tres polígonos en la base |
-| 7 | Lazo de 12 y 6 | Propia | 4 | 3,5–6,1 | 5,9–7,7 mm | Jerarquía entre estrellas · **3 variantes** |
-| 8 | Lazo de 12 y 8 | Propia | 5 | 3,5–4,9 | 4,1–4,9 mm | La misma estrella de 12 con otra compañía · **3 variantes** |
-| 9 | Lazo de 10 | Girih | 6 | 3,1–3,5 | 8,2–10,4 mm | La familia del pentágono · **3 variantes** |
-| 10 | Lazo de 16 y 8 | Propia | 6 | 4,7–5,2 | 4,4–5,5 mm | La rueda de 16 · **3 variantes** |
-| 11 | Lazo de 16 y 6 | Propia | 7 | 3,6–4,3 | 4,0–4,6 mm | La rueda de 16 en otra simetría · **3 variantes** |
-| 12 | Lazo de 20 y 10 | Propia | 10 | 2,3–3,2 | 4,5–5,5 mm | La culminación · **3 variantes** |
+| 7 | Lazo de 12 y 6 | Propia | 4 | 4,4 | 5,9 mm | Jerarquía entre estrellas |
+| 8 | Lazo de 12 y 8 | Propia | 5 | 4,9 | 4,9 mm | La misma estrella de 12 con otra compañía |
+| 9 | Lazo de 10 | Girih | 6 | 3,5 | 10,4 mm | La familia del pentágono |
+| 10 | Lazo de 16 y 8 | Propia | 6 | 4,7 | 4,4 mm | La rueda de 16 |
+| 11 | *Por elegir* | — | — | — | — | Ver candidatas abajo |
+| 12 | Lazo de 20 y 10 | Propia | 10 | 2,7 | 5,5 mm | La culminación |
 
 La familia del 12 tiene cuatro láminas a propósito: es la más rica de la tradición, y verla con distintas compañías enseña que el mismo motivo con otra simetría da otro diseño.
 
-## Variantes para elegir
+## Variantes elegidas por el autor
+- 7 · Lazo de 12 y 6: variante C (celda 50 mm).
+- 8 · Lazo de 12 y 8: variante A (estrellas al tresbolillo, celda 55 mm).
+- 9 · Lazo de 10: variante A (enderezada, bandas horizontales).
+- 10 · Lazo de 16 y 8: variante B (sin girar, celda 80 mm).
+- 12 · Lazo de 20 y 10: variante C (celda 120 mm).
+- 11 · El lazo de 16 y 6 se descarta.
 
-| Lámina | A | B | C |
-|---|---|---|---|
-| 7 · Lazo de 12 y 6 | Red tal cual, celda 62 mm | Girada 30°, celda 62 mm (más repeticiones a lo ancho) | Celda 50 mm, otra combinación de color |
-| 8 · Lazo de 12 y 8 | Estrellas al tresbolillo, celda 55 mm | Girada 45°: estrellas en filas y columnas | Girada 45°, celda 48 mm, paleta almagra |
-| 9 · Lazo de 10 | Enderezada: bandas horizontales | Igual, otra combinación de color | Girada 90°: bandas verticales, celda 45 mm |
-| 10 · Lazo de 16 y 8 | Girada 45°, celda 80 mm | Sin girar, celda 80 mm | Girada −22,5°, celda 95 mm |
-| 11 · Lazo de 16 y 6 | Celda 90 mm | Celda 100 mm, paleta almagra | Celda 110 mm |
-| 12 · Lazo de 20 y 10 | Diagonal horizontal, celda 100 mm | Diagonal vertical, celda 100 mm | Celda 120 mm |
+## Candidatas para la lámina 11
 
-Cada carpeta con variantes tiene una hoja `variantes.png` para compararlas.
+![Candidatas](../laminas/hilo/11-candidatas/candidatas.png)
+
+| Candidata | Tipos de pieza | Repeticiones a lo ancho | Pieza mínima | Lo que aportaría |
+|---|---|---|---|---|
+| A · Roseta de 12 | 5 | 5,4 | 6,9 mm | La rueda con pétalos: la estrella se abre en flor. Muy característica de la lacería |
+| B · Lazo de 16 y 12 | 5 | 2,1 | 4,7 mm | Dos ruedas grandes juntas (cinta ancha) |
+| C · Lazo de 16 y 8, segunda | 5 | 2,4 | 4,7 mm | Ruedas de 16 enlazadas por estrellas de 8 |
+| D · Lazo de 10 y 5 | 6 | 2,4 | 16,0 mm | Segunda visita a la familia del pentágono |
+
+Están en `laminas/hilo/11-candidatas/`.
 
 ## Archivos
 

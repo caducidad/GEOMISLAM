@@ -85,6 +85,6 @@ Doce lazos que reaparecen en los movimientos I, II y III. Ver `docs/laminas-hilo
 Alternativas por decidir: imprimir a doble cara los ejercicios de lápiz (unas 170 páginas), o publicar en dos volúmenes más una edición integral, como Hamonshū.
 
 ## Pendiente
-- Elegir las variantes de las láminas hilo 7 a 12.
+- Elegir la lámina hilo 11 entre las candidatas.
 - Diseñar las láminas de acompañamiento.
 - Construir el maquetador.
