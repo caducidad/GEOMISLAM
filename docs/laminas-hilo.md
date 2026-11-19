@@ -8,7 +8,7 @@ Las láminas hilo reaparecen en los tres primeros movimientos: el lector las **c
 
 1. **Patrón evidente.** El lector debe ver de un vistazo cómo se repite el dibujo: retícula alineada con la página, estrella principal en posiciones previsibles y la celda repetida varias veces a lo ancho (entre 2,3 y 9,5 repeticiones).
 2. **Construible con regla y compás.** Solo órdenes de simetría construibles (4, 6, 8, 10, 12, 16, 20), para que el Movimiento III se pueda hacer de verdad.
-3. **Dificultad creciente.** De 2 a 10 tipos de pieza, siempre sobre una repetición clara.
+3. **Dificultad creciente.** De 2 a 10 tipos de pieza, siempre sobre una repetición clara. La roseta (11) tiene menos piezas que la lámina 10: su dificultad está en la construcción.
 4. **Coloreable.** Ninguna pieza visible por debajo de 4 mm de diámetro equivalente. En las grandes ruedas, la cinta se engrosa hasta tapar las astillas que dejaría el trazado.
 
 Los diseños difíciles de leer (grandes ruedas, girih de 10, retículas propias) no se descartan: se componen (escala, giro, encuadre centrado en la estrella principal, color) para que su repetición se lea. Cuando hay dudas, se ofrecen variantes para que el autor elija.
@@ -27,7 +27,7 @@ Los diseños difíciles de leer (grandes ruedas, girih de 10, retículas propias
 | 8 | Lazo de 12 y 8 | Propia | 5 | 4,9 | 4,9 mm | La misma estrella de 12 con otra compañía |
 | 9 | Lazo de 10 | Girih | 6 | 3,5 | 10,4 mm | La familia del pentágono |
 | 10 | Lazo de 16 y 8 | Propia | 6 | 4,7 | 4,4 mm | La rueda de 16 |
-| 11 | *Por elegir* | — | — | — | — | Ver candidatas abajo |
+| 11 | Roseta de 12 | Dodecágonos y triángulos, con rosetas | 5 | 5,4 | 6,9 mm | La estrella se abre en flor: la roseta |
 | 12 | Lazo de 20 y 10 | Propia | 10 | 2,7 | 5,5 mm | La culminación |
 
 La familia del 12 tiene cuatro láminas a propósito: es la más rica de la tradición, y verla con distintas compañías enseña que el mismo motivo con otra simetría da otro diseño.
@@ -38,20 +38,7 @@ La familia del 12 tiene cuatro láminas a propósito: es la más rica de la trad
 - 9 · Lazo de 10: variante A (enderezada, bandas horizontales).
 - 10 · Lazo de 16 y 8: variante B (sin girar, celda 80 mm).
 - 12 · Lazo de 20 y 10: variante C (celda 120 mm).
-- 11 · El lazo de 16 y 6 se descarta.
-
-## Candidatas para la lámina 11
-
-![Candidatas](../laminas/hilo/11-candidatas/candidatas.png)
-
-| Candidata | Tipos de pieza | Repeticiones a lo ancho | Pieza mínima | Lo que aportaría |
-|---|---|---|---|---|
-| A · Roseta de 12 | 5 | 5,4 | 6,9 mm | La rueda con pétalos: la estrella se abre en flor. Muy característica de la lacería |
-| B · Lazo de 16 y 12 | 5 | 2,1 | 4,7 mm | Dos ruedas grandes juntas (cinta ancha) |
-| C · Lazo de 16 y 8, segunda | 5 | 2,4 | 4,7 mm | Ruedas de 16 enlazadas por estrellas de 8 |
-| D · Lazo de 10 y 5 | 6 | 2,4 | 16,0 mm | Segunda visita a la familia del pentágono |
-
-Están en `laminas/hilo/11-candidatas/`.
+- 11 · El lazo de 16 y 6 se descarta; en su lugar, la roseta de 12 (candidata A de cuatro).
 
 ## Archivos
 
