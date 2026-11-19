@@ -1,0 +1,1610 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Taller de Lacería</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: herramienta de dos columnas — panel de parámetros a la izquierda, lienzo vivo a la derecha; en móvil, lienzo arriba y panel debajo */
+:root{
+  --bg:#e9eeec; --panel:#f7f9f8; --fg:#13221f; --muted:#5a6b66; --line:#d3dcd9;
+  --accent:#0f6b59; --accent-ink:#ffffff; --chip:#e4ebe8;
+  --f-display:"Reem Kufi","Instrument Sans",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1413; --panel:#141e1c; --fg:#e2ebe8; --muted:#90a29d; --line:#26332f;
+  --accent:#4cc1a4; --accent-ink:#06201a; --chip:#1c2926; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1413; --panel:#141e1c; --fg:#e2ebe8; --muted:#90a29d; --line:#26332f;
+  --accent:#4cc1a4; --accent-ink:#06201a; --chip:#1c2926; color-scheme:dark}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px}
+.app{display:grid;grid-template-columns:320px minmax(0,1fr);height:100%}
+.panel{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;
+  padding-block:20px 28px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:18px;
+  display:flex;flex-direction:column;gap:20px}
+.stage{position:relative;min-width:0;min-height:0}
+#host{position:absolute;inset:0;touch-action:none;cursor:grab}
+#host:active{cursor:grabbing}
+#host svg{display:block;width:100%;height:100%}
+.hud{position:absolute;left:12px;bottom:12px;font-family:var(--f-mono);font-size:11.5px;
+  background:color-mix(in srgb,var(--panel) 88%,transparent);color:var(--muted);
+  padding:5px 9px;border-radius:6px;border:1px solid var(--line);pointer-events:none;font-variant-numeric:tabular-nums}
+h1{font-family:var(--f-display);font-weight:700;font-size:26px;margin:0;letter-spacing:.01em;line-height:1.1}
+.sub{color:var(--muted);margin:4px 0 0;font-size:13px}
+.group{display:flex;flex-direction:column;gap:10px}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;color:inherit}
+.chip{background:var(--chip);border:1px solid transparent;border-radius:999px;padding:5px 11px;cursor:pointer;font-size:12.5px}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:7px 9px;width:100%}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
+.slider label{font-size:13px}
+.slider output{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.slider input{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:2px 0 0}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--chip);border-radius:8px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;border-radius:6px;padding:6px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--panel);box-shadow:0 1px 2px rgb(0 0 0 / .15);font-weight:600}
+.seg3{grid-template-columns:repeat(3,1fr)}
+.histrow{display:flex;gap:8px;margin-top:-6px}
+.histrow .btn{padding:6px 10px;font-size:13px}
+.histrow .btn:disabled{opacity:.45;cursor:default;filter:none}
+.animrow{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+.animbtn{flex:none;padding:6px 12px;font-size:13px}
+.animbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.speed button{font-size:12px;padding:5px 4px}
+.sublabel{font-size:13px}
+.sub-angles{display:flex;flex-direction:column;gap:8px;padding-left:12px;border-left:2px solid var(--line);margin-top:-2px}
+.sub-angles .slider label{font-size:12.5px;color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);margin:0;line-height:1.4}
+.colors{display:flex;flex-wrap:wrap;gap:6px}
+.cdot{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);padding:0;cursor:pointer;box-shadow:inset 0 0 0 1px rgb(0 0 0 / .12)}
+.cdot[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px}
+.cpick{position:relative;width:26px;height:26px;border-radius:50%;overflow:hidden;border:1px dashed var(--muted);display:grid;place-items:center;font-size:15px;color:var(--muted);cursor:pointer}
+.cpick input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.cpick[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px}
+.autorow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.crows{display:flex;flex-direction:column;gap:6px}
+.crow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}
+.crow.mod span::after{content:" •";color:var(--accent)}
+.crow input[type=color]{width:44px;height:26px;padding:0 2px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer}
+.saverow{display:flex;gap:8px}
+.saverow input{flex:1;min-width:0;font:inherit;font-size:13px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.saverow .btn{flex:none}
+#codeOut{width:100%;height:64px;font-family:var(--f-mono);font-size:10.5px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;word-break:break-all}
+.favs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.favs li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:5px;background:var(--bg)}
+.favload{display:flex;gap:10px;align-items:center;background:none;border:0;padding:0;cursor:pointer;text-align:left;min-width:0}
+.favload img{width:46px;height:46px;border-radius:6px;object-fit:cover;flex:none;background:var(--chip)}
+.favtext{display:flex;flex-direction:column;min-width:0}
+.favtext b{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.favtext small{color:var(--muted);font-size:11.5px}
+.favbtns{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.favbtns .linkbtn{font-size:12px}
+.paintfoot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.linkbtn{white-space:nowrap;flex:none;background:none;border:0;padding:2px 0;color:var(--accent);cursor:pointer;font-size:12.5px;text-decoration:underline;text-underline-offset:2px}
+.linkbtn:disabled{color:var(--muted);opacity:.5;cursor:default;text-decoration:none}
+#host.painting{cursor:crosshair}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sw{border:2px solid transparent;border-radius:8px;padding:0;height:34px;cursor:pointer;overflow:hidden;display:flex}
+.sw span{flex:1}
+.sw[aria-pressed="true"]{border-color:var(--accent)}
+.actions{display:flex;gap:8px}
+.btn{flex:1;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px;cursor:pointer;font-weight:500}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:hover{filter:brightness(1.05)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.how{font-size:12.5px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:14px}
+.how ol{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.how b{color:var(--fg);font-weight:600}
+.stepcard{box-sizing:border-box;position:absolute;top:12px;left:max(12px,env(safe-area-inset-left,0px));width:min(430px,calc(100% - 24px));
+  background:color-mix(in srgb,var(--panel) 95%,transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  box-shadow:0 6px 24px rgb(0 0 0 / .14);display:flex;flex-direction:column;gap:6px}
+.stephead{display:flex;justify-content:space-between;align-items:center}
+.stepnum{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.stepcard h2{font-family:var(--f-display);font-size:19px;margin:0;line-height:1.15}
+.stepcard p{margin:0;font-size:13px;line-height:1.45;color:var(--fg)}
+.stepnav{display:flex;align-items:center;gap:8px;margin-top:4px}
+.stepnav .btn{flex:none;padding:7px 12px;font-size:13px}
+.stepnav .btn:disabled{opacity:.45;cursor:default}
+.stepdots{flex:1;display:flex;justify-content:center;gap:7px}
+.stepdots button{width:11px;height:11px;border-radius:50%;border:1px solid var(--muted);background:transparent;padding:0;cursor:pointer}
+.stepdots button[aria-current="step"]{background:var(--accent);border-color:var(--accent)}
+@media (max-width:860px){.stepcard{padding:9px 11px;gap:4px}.stepcard h2{font-size:16px}.stepcard p{font-size:12px}}
+.toast{position:absolute;top:12px;right:max(12px,env(safe-area-inset-right,0px));background:var(--fg);color:var(--bg);
+  padding:7px 12px;border-radius:7px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+#svgOut{width:100%;height:90px;font-family:var(--f-mono);font-size:10px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto auto;height:auto}
+  .stage{order:-1;aspect-ratio:1/1;max-width:100%;max-height:70vh;width:100%}
+  .panel{border-right:0;border-top:1px solid var(--line);padding-right:max(16px,env(safe-area-inset-right,0px));padding-left:max(16px,env(safe-area-inset-left,0px));overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+
+<div class="app">
+  <aside class="panel">
+    <header>
+      <h1>Taller de Lacería</h1>
+      <p class="sub">Patrones geométricos con el método de polígonos en contacto</p>
+    </header>
+    <div class="histrow">
+      <button type="button" class="btn" id="undoBtn" title="Deshacer (Ctrl+Z)" disabled>Deshacer</button>
+      <button type="button" class="btn" id="redoBtn" title="Rehacer (Ctrl+Mayús+Z)" disabled>Rehacer</button>
+    </div>
+
+    <div class="group">
+      <span class="label">Punto de partida</span>
+      <div class="chips" id="presets"></div>
+    </div>
+
+    <div class="group">
+      <label class="label" for="tiling">Retícula base</label>
+      <select id="tiling"></select>
+      <div class="paintfoot" id="girihHint" hidden><p class="hint" id="recText"></p><button type="button" class="linkbtn" id="girih54"></button></div>
+      <div class="paintfoot" id="provRow"><p class="hint" id="provLine"></p><button type="button" class="linkbtn" id="provCopy">Copiar ficha</button></div>
+      <textarea id="provOut" hidden readonly aria-label="Ficha del diseño"></textarea>
+    </div>
+
+    <div class="group">
+      <div class="slider"><label for="theta">Ángulo de contacto θ</label><output id="thetaV"></output>
+        <input type="range" id="theta" min="10" max="85" step="0.5"></div>
+      <div class="animrow">
+        <button type="button" class="btn animbtn" id="animBtn" aria-pressed="false">Animar θ</button>
+        <div class="seg seg3 speed" id="animSpeed" role="group" aria-label="Velocidad de la animación">
+          <button type="button" data-v="20">Lenta</button><button type="button" data-v="10">Media</button><button type="button" data-v="5">Rápida</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="perPoly"> Un ángulo para cada tipo de polígono</label>
+      <div class="sub-angles" id="polyAngles" hidden></div>
+      <label class="check"><input type="checkbox" id="rosette"> Rosetas con pétalos</label>
+      <div class="sub-angles" id="rosBox" hidden>
+        <div class="slider"><label for="rosetteSize">Tamaño de la roseta</label><output id="rosetteSizeV"></output>
+          <input type="range" id="rosetteSize" min="0.4" max="0.85" step="0.01"></div>
+        <div class="slider"><label for="petalShape">Forma del pétalo</label><output id="petalShapeV"></output>
+          <input type="range" id="petalShape" min="0" max="1" step="0.01"></div>
+        <p class="hint" id="rosHint"></p>
+      </div>
+      <div class="slider"><label for="delta">Separación δ</label><output id="deltaV"></output>
+        <input type="range" id="delta" min="0" max="0.45" step="0.01"></div>
+      <div class="slider"><label for="scale">Tamaño</label><output id="scaleV"></output>
+        <input type="range" id="scale" min="24" max="160" step="1"></div>
+      <div class="slider"><label for="rot">Giro</label><output id="rotV"></output>
+        <input type="range" id="rot" min="0" max="90" step="1"></div>
+    </div>
+
+    <div class="group">
+      <span class="label">Trazo</span>
+      <div class="seg" id="style">
+        <button type="button" data-v="lace">Lacería</button>
+        <button type="button" data-v="lines">Líneas</button>
+      </div>
+      <div class="slider"><label for="width">Grosor</label><output id="widthV"></output>
+        <input type="range" id="width" min="1" max="16" step="0.5"></div>
+      <div class="group" id="laceOpts">
+        <span class="sublabel" id="joinLabel">Esquinas de la cinta</span>
+        <div class="seg seg3" id="join" role="group" aria-labelledby="joinLabel">
+          <button type="button" data-v="miter">En pico</button>
+          <button type="button" data-v="round">Redondeadas</button>
+          <button type="button" data-v="bevel">Biseladas</button>
+        </div>
+        <div class="slider"><label for="outline">Grosor del borde</label><output id="outlineV"></output>
+          <input type="range" id="outline" min="0" max="0.5" step="0.01"></div>
+      </div>
+      <label class="check"><input type="checkbox" id="fill"> Rellenar estrellas</label>
+      <label class="check"><input type="checkbox" id="guide"> Mostrar retícula de construcción</label>
+    </div>
+
+    <div class="group">
+      <span class="label">Pintar huecos</span>
+      <div class="autorow"><label class="check"><input type="checkbox" id="autoColor"> Color automático por forma</label>
+        <button type="button" class="linkbtn" id="autoShuffle">Otra combinación</button></div>
+      <div class="seg" id="tools">
+        <button type="button" data-v="brush" aria-pressed="false">Pincel</button>
+        <button type="button" data-v="eraser" aria-pressed="false">Goma</button>
+      </div>
+      <div class="colors" id="paintColors" role="group" aria-label="Color del pincel"></div>
+      <label class="check"><input type="checkbox" id="paintRep" checked> Repetir en todo el patrón</label>
+      <div class="paintfoot"><p class="hint" id="paintInfo"></p><button type="button" class="linkbtn" id="paintClear">Quitar pintura</button></div>
+    </div>
+
+    <div class="group">
+      <span class="label">Paleta</span>
+      <div class="swatches" id="palettes"></div>
+      <div class="paintfoot"><span class="sub" id="palName" style="margin:0"></span>
+        <button type="button" class="linkbtn" id="customToggle" aria-expanded="false" aria-controls="customBox">Personalizar colores</button></div>
+      <div class="sub-angles" id="customBox" hidden>
+        <div class="crows" id="customRows"></div>
+        <button type="button" class="linkbtn" id="customReset" style="align-self:flex-start">Volver a los colores de la paleta</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn primary" id="random">Sorpréndeme</button>
+      <button type="button" class="btn" id="exportToggle" aria-expanded="false" aria-controls="exportBox">Descargar SVG</button>
+    </div>
+    <div class="sub-angles" id="exportBox" hidden>
+      <span class="sublabel" id="expSizeLabel">Tamaño de papel</span>
+      <div class="seg" id="expSize" role="group" aria-labelledby="expSizeLabel">
+        <button type="button" data-v="A4">A4 · 210 × 297 mm</button><button type="button" data-v="A3">A3 · 297 × 420 mm</button>
+      </div>
+      <div class="seg" id="expOrient" role="group" aria-label="Orientación">
+        <button type="button" data-v="p">Vertical</button><button type="button" data-v="l">Horizontal</button>
+      </div>
+      <label class="check"><input type="checkbox" id="expMargin"> Margen blanco de 10 mm</label>
+      <p class="hint" id="expInfo">El dibujo se genera para la hoja entera, a la misma escala que ves en pantalla (en A3 cabe más diseño). La ficha de procedencia va dentro del archivo.</p>
+      <div class="saverow"><button type="button" class="btn primary" id="expSave">Descargar</button><button type="button" class="btn" id="copy">Copiar SVG</button></div>
+    </div>
+    <textarea id="svgOut" hidden readonly aria-label="Código SVG"></textarea>
+
+    <div class="group">
+      <span class="label">Mis diseños</span>
+      <div class="saverow">
+        <input type="text" id="favName" maxlength="60" placeholder="Nombre del diseño" aria-label="Nombre del diseño" autocomplete="off">
+        <button type="button" class="btn primary" id="favSave">Guardar</button>
+      </div>
+      <p class="hint" id="favMsg"></p>
+      <ul class="favs" id="favList"></ul>
+      <span class="sublabel">Código de diseño</span>
+      <p class="hint">Un texto con todo el diseño, para recuperarlo o pasárselo a alguien.</p>
+      <button type="button" class="btn" id="codeCopy">Copiar el código de este diseño</button>
+      <textarea id="codeOut" hidden readonly aria-label="Código de diseño"></textarea>
+      <div class="saverow">
+        <input type="text" id="codeIn" placeholder="Pega aquí un código LAC1…" aria-label="Pegar un código de diseño" spellcheck="false" autocomplete="off">
+        <button type="button" class="btn" id="codeLoad">Cargar</button>
+      </div>
+    </div>
+
+    <div class="how">
+      <b>Cómo se construye</b>
+      <ol>
+        <li>Se cubre el plano con polígonos regulares (la retícula).</li>
+        <li>Desde el centro de cada lado salen dos rayos inclinados θ grados.</li>
+        <li>Cada rayo se prolonga hasta cortar al del lado vecino.</li>
+        <li>Se borra la retícula y quedan las estrellas.</li>
+        <li>En cada cruce la cinta pasa alternando por encima y por debajo.</li>
+      </ol>
+      <button type="button" class="btn" id="stepOpen" style="margin-top:10px;width:100%">Verlo paso a paso en el dibujo</button>
+      <p style="margin:8px 0 0">Arrastra el dibujo para desplazarlo. Con el pincel activo, toca un hueco para pintarlo.</p>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div id="host" aria-label="Patrón generado" role="img"></div>
+    <div class="hud" id="hud"></div>
+    <div class="toast" id="toast"></div>
+    <section class="stepcard" id="stepCard" hidden aria-label="Construcción paso a paso" aria-live="polite">
+      <div class="stephead"><span class="stepnum" id="stepNum"></span><button type="button" class="linkbtn" id="stepClose">Salir</button></div>
+      <h2 id="stepTitle"></h2>
+      <p id="stepText"></p>
+      <div class="stepnav">
+        <button type="button" class="btn" id="stepPrev">Anterior</button>
+        <div class="stepdots" id="stepDots"></div>
+        <button type="button" class="btn primary" id="stepNext">Siguiente</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const SQ3 = Math.sqrt(3);
+const TILINGS = {
+  "4.4.4.4": { name: "Cuadrados · 4.4.4.4", T1:[1,0], T2:[0,1], polys:[[.5,.5,4,45]] },
+  "6.6.6": { name: "Hexágonos · 6.6.6", T1:[SQ3,0], T2:[SQ3/2,1.5], polys:[[0,0,6,30]] },
+  "3.3.3.3.3.3": { name: "Triángulos · 3⁶", T1:[1,0], T2:[.5,SQ3/2], polys:[[.5,SQ3/6,3,90],[1,SQ3/3,3,-90]] },
+  "4.8.8": (()=>{const L=1+Math.SQRT2;return { name:"Octógonos y cuadrados · 4.8.8", T1:[L,0], T2:[0,L], polys:[[0,0,8,22.5],[L/2,L/2,4,0]] }})(),
+  "3.6.3.6": { name: "Hexágonos y triángulos · 3.6.3.6", T1:[2,0], T2:[1,SQ3], polys:[[0,0,6,0],[1,1/SQ3,3,-90],[0,2/SQ3,3,90]] },
+  "3.12.12": (()=>{const L=2+SQ3;return { name:"Dodecágonos y triángulos · 3.12.12", T1:[L,0], T2:[L/2,L*SQ3/2], polys:[[0,0,12,15],[L/2,L*SQ3/6,3,30],[L,L*SQ3/3,3,90]] }})(),
+  "4.6.12": (()=>{const L=3+SQ3;return { name:"Dodecágonos, hexágonos y cuadrados · 4.6.12", T1:[L,0], T2:[L/2,L*SQ3/2],
+    polys:[[0,0,12,15],[L/2,0,4,45],[L/4,L*SQ3/4,4,15],[3*L/4,L*SQ3/4,4,75],[L/2,L*SQ3/6,6,0],[L,L*SQ3/3,6,0]] }})(),
+  "3.4.6.4": (()=>{const L=1+SQ3;return { name:"Hexágonos, cuadrados y triángulos · 3.4.6.4", T1:[L,0], T2:[L/2,L*SQ3/2],
+    polys:[[0,0,6,30],[L/2,0,4,45],[L/4,L*SQ3/4,4,15],[3*L/4,L*SQ3/4,4,75],[L/2,L*SQ3/6,3,90],[L,L*SQ3/3,3,30]] }})(),
+  "3.3.3.4.4": { name:"Franjas de cuadrados y triángulos · 3.3.3.4.4", T1:[1,0], T2:[.5,1+SQ3/2],
+    polys:[[.5,.5,4,45],[.5,1+SQ3/6,3,90],[1,1+SQ3/3,3,-90]] },
+  "3.3.4.3.4": (()=>{const c=1+SQ3/2;return { name:"Cuadrados en molinete · 3.3.4.3.4", T1:[c,-.5], T2:[.5,c],
+    polys:[[.5,.5,4,45],[.75+SQ3/4,-.25-SQ3/4,4,15],[.5,-SQ3/6,3,-90],[1+SQ3/6,.5,3,0],[.5,1+SQ3/6,3,90],[-SQ3/6,.5,3,180]] }})(),
+  "3.3.3.3.6": (()=>{const r=2/SQ3, P=[[0,0,6,0]];
+    for(let k=0;k<6;k++){const a=(30+60*k)*Math.PI/180; P.push([r*Math.cos(a),r*Math.sin(a),3,30+60*k]);}
+    P.push([1,2*SQ3/3,3,-30],[2,4*SQ3/3,3,150]);
+    return { name:"Hexágonos en espiral · 3.3.3.3.6", T1:[2.5,SQ3/2], T2:[.5,1.5*SQ3], polys:P }})(),  "G-db": { name:"Girih · decágonos y pajaritas", T1:[0.0, -3.0776835372], T2:[2.9270509831, -0.9510565163], polys:[[0.5, 1.5388417686, 10, -108.0], {"t": "b", "v": [[1.8090169944, 0.5877852523], [1.0, -0.0], [1.8090169944, -0.5877852523], [2.1180339887, -1.5388417686], [2.9270509831, -0.9510565163], [2.1180339887, -0.363271264]]}] },
+  "G-dpr": { name:"Girih · decágonos, pentágonos y rombos", T1:[-2.9270509831, -0.9510565163], T2:[1.3090169944, -4.0287400535], polys:[[0.5, 1.5388417686, 10, -108.0], {"t": "r", "v": [[2.1180339887, 1.5388417686], [1.8090169944, 0.5877852523], [2.6180339887, -0.0], [2.9270509831, 0.9510565163]]}, {"t": "r", "v": [[1.0, 3.0776835372], [1.8090169944, 2.4898982849], [2.1180339887, 3.4409548012], [1.3090169944, 4.0287400535]]}, [0.5, -0.6881909602, 5, 54.0], [1.8090169944, -0.2628655561, 5, 90.0]] },
+  "G-hb": { name:"Girih · hexágonos y pajaritas", T1:[-1.1180339887, -1.5388417686], T2:[1.8090169944, -2.4898982849], polys:[{"t": "h", "v": [[0.0, 0.0], [1.0, 0.0], [1.8090169944, 0.5877852523], [2.1180339887, 1.5388417686], [1.1180339887, 1.5388417686], [0.3090169944, 0.9510565163]]}, {"t": "h", "v": [[1.8090169944, 0.5877852523], [1.0, -0.0], [0.6909830056, -0.9510565163], [1.0, -1.9021130326], [1.8090169944, -1.3143277803], [2.1180339887, -0.363271264]]}, {"t": "b", "v": [[0.3090169944, 0.9510565163], [1.1180339887, 1.5388417686], [0.3090169944, 2.1266270209], [0.0, 1.1755705046], [-0.8090169944, 0.5877852523], [-0.0, -0.0]]}] },
+  "G-hp": { name:"Girih · hexágonos y pentágonos", T1:[-0.1909830056, 2.4898982849], T2:[-2.3090169944, 0.9510565163], polys:[{"t": "h", "v": [[0.0, 0.0], [1.0, 0.0], [1.8090169944, 0.5877852523], [2.1180339887, 1.5388417686], [1.1180339887, 1.5388417686], [0.3090169944, 0.9510565163]]}, [0.5, -0.6881909602, 5, 54.0], [1.8090169944, -0.2628655561, 5, 90.0]] },
+  "G-h": { name:"Girih · hexágonos alargados", T1:[1.8090169944, 0.5877852523], T2:[1.1180339887, 1.5388417686], polys:[{"t": "h", "v": [[0.0, 0.0], [1.0, 0.0], [1.8090169944, 0.5877852523], [2.1180339887, 1.5388417686], [1.1180339887, 1.5388417686], [0.3090169944, 0.9510565163]]}] },
+  "P-0": { name:"Propia · Estrellas de 7 en dos orientaciones", T1:[2.5385908771, -2.0244586698], T2:[1.4088116513, 2.9254275377], rec:72, origin:{"config": "polígono regular de 7 lados y su copia girada 180°, en contacto lado con lado", "ref": "C-0"}, labels:{"pA": "Relleno A (8 lados)"}, polys:[[-0.0, 0.0, 7, 25.71428571], [2.0765213966, 0.0, 7, -154.28571429], {"t": "pA", "v": [[0.2564292158, 1.1234898019], [1.0382606983, 0.5], [1.8200921808, 1.1234898019], [2.7950200929, 0.9009688679], [3.2289038321, 1.8019377358], [2.4470723496, 2.4254275377], [1.6652408671, 1.8019377358], [0.6903129549, 2.0244586698]]}] },
+  "P-1": { name:"Propia · Estrellas de 8 y 6 (a)", T1:[0.0, 2.4142135624], T2:[-4.1462643699, 0.0], rec:54, origin:{"config": "polígono regular de 8 lados con 1 de 6 lados en contacto lado con lado", "ref": "C-53"}, labels:{"pA": "Relleno A (8 lados)"}, polys:[[-0.0, -0.0, 8, 22.5], [2.073132185, -0.0, 6, -150.0], {"t": "pA", "v": [[0.5, 1.2071067812], [1.2071067812, 0.5], [2.073132185, 1.0], [2.9391575888, 0.5], [3.6462643699, 1.2071067812], [2.9391575888, 1.9142135624], [2.073132185, 1.4142135624], [1.2071067812, 1.9142135624]]}] },
+  "P-2": { name:"Propia · Estrellas de 8 y 6 (b)", T1:[4.1462643699, -0.0], T2:[0.0, 4.1462643699], rec:72, origin:{"config": "polígono regular de 8 lados con 2 de 6 lados en contacto lado con lado", "ref": "C-54"}, labels:{"pA": "Relleno A (12 lados)"}, polys:[[-0.0, -0.0, 8, 22.5], [2.073132185, -0.0, 6, -150.0], [0.0, 2.073132185, 6, -60.0], {"t": "pA", "v": [[0.5, 1.2071067812], [1.2071067812, 0.5], [2.073132185, 1.0], [2.9391575888, 0.5], [3.6462643699, 1.2071067812], [3.1462643699, 2.073132185], [3.6462643699, 2.9391575888], [2.9391575888, 3.6462643699], [2.073132185, 3.1462643699], [1.2071067812, 3.6462643699], [0.5, 2.9391575888], [1.0, 2.073132185]]}] },
+  "P-3": { name:"Propia · Estrellas de 9 en dos orientaciones", T1:[4.1212161292, -2.3793852416], T2:[4.1212161292, 2.3793852416], rec:72, origin:{"config": "polígono regular de 9 lados y su copia girada 180°, en contacto lado con lado", "ref": "C-2"}, labels:{"pA": "Relleno A (12 lados)"}, polys:[[-0.0, -0.0, 9, 20.0], [2.7474774195, -0.0, 9, -160.0], {"t": "pA", "v": [[0.7309511, 1.2660444431], [1.3737387097, 0.5], [2.0165263194, 1.2660444431], [3.0013340724, 1.4396926208], [2.6593139291, 2.3793852416], [3.0013340724, 3.3190778624], [2.0165263194, 3.49272604], [1.3737387097, 4.2587704831], [0.7309511, 3.49272604], [-0.253856653, 3.3190778624], [0.0881634904, 2.3793852416], [-0.253856653, 1.4396926208]]}] },
+  "P-4": { name:"Propia · Estrellas de 9 y 3", T1:[2.4936207665, -1.4396926208], T2:[0.984807753, 2.7057370639], rec:54, origin:{"config": "polígono regular de 9 lados con 2 de 3 lados en contacto lado con lado", "ref": "C-76"}, labels:{"pA": "Relleno A (7 lados)"}, polys:[[-0.0, -0.0, 9, 20.0], [1.6624138443, 0.0, 3, -120.0], [1.2734828876, 1.0685790213, 3, -80.0], {"t": "pA", "v": [[-0.253856653, 1.4396926208], [0.7309511, 1.2660444431], [-0.1350743037, 1.7660444431], [-0.4770944471, 2.7057370639], [-0.1350743037, 3.6454296847], [-0.7778619134, 2.8793852416], [-1.1198820568, 1.9396926208]]}] },
+  "P-5": { name:"Propia · Estrellas de 9 y 6", T1:[3.3596461703, -1.9396926208], T2:[3.3596461703, 1.9396926208], rec:72, origin:{"config": "polígono regular de 9 lados con 1 de 6 lados en contacto lado con lado", "ref": "C-37"}, labels:{"pA": "Relleno A (9 lados)"}, polys:[[-0.0, -0.0, 9, 20.0], [2.2397641135, -0.0, 6, -150.0], {"t": "pA", "v": [[0.7309511, 1.2660444431], [1.3737387097, 0.5], [2.2397641135, 1.0], [1.8977439702, 1.9396926208], [2.2397641135, 2.8793852416], [1.3737387097, 3.3793852416], [0.7309511, 2.6133407985], [-0.253856653, 2.4396926208], [-0.253856653, 1.4396926208]]}] },
+  "P-6": { name:"Propia · Estrellas de 10 y 5 (a)", T1:[-0.9510565163, 2.9270509831], T2:[-4.0287400535, -1.3090169944], rec:54, origin:{"config": "polígono regular de 10 lados con 2 de 5 lados en contacto lado con lado", "ref": "C-34"}, labels:{"pA": "Relleno A (4 lados)"}, polys:[[-0.0, -0.0, 10, 18.0], [2.2270327288, -0.0, 5, -144.0], [1.8017073246, 1.3090169944, 5, -108.0], {"t": "pA", "v": [[0.0, 1.6180339887], [0.9510565163, 1.3090169944], [1.5388417686, 2.1180339887], [0.5877852523, 2.4270509831]]}, {"t": "pA", "v": [[-1.5388417686, 0.5], [-0.9510565163, 1.3090169944], [-1.9021130326, 1.6180339887], [-2.4898982849, 0.8090169944]]}] },
+  "P-7": { name:"Propia · Estrellas de 10 y 5 (b)", T1:[0.9510565163, 2.9270509831], T2:[-4.0287400535, 1.3090169944], rec:54, origin:{"config": "polígono regular de 10 lados con 1 de 5 lados en contacto lado con lado", "ref": "C-32"}, labels:{"pA": "Relleno A (9 lados)"}, polys:[[-0.0, -0.0, 10, 18.0], [2.2270327288, -0.0, 5, -144.0], {"t": "pA", "v": [[0.9510565163, 1.3090169944], [1.5388417686, 0.5], [2.4898982849, 0.8090169944], [3.0776835372, 0.0], [4.0287400535, 0.3090169944], [3.4409548012, 1.1180339887], [3.4409548012, 2.1180339887], [2.4898982849, 2.4270509831], [1.9021130326, 1.6180339887]]}] },
+  "P-8": { name:"Propia · Estrellas de 10 y 6 (a)", T1:[0.9510565163, 2.9270509831], T2:[-4.8097343447, 0.0], rec:67.5, origin:{"config": "polígono regular de 10 lados con 1 de 6 lados en contacto lado con lado", "ref": "C-73"}, labels:{"pA": "Relleno A (10 lados)"}, polys:[[-0.0, -0.0, 10, 18.0], [2.4048671724, -0.0, 6, -150.0], {"t": "pA", "v": [[0.9510565163, 1.3090169944], [1.5388417686, 0.5], [2.4048671724, 1.0], [3.2708925762, 0.5], [3.8586778284, 1.3090169944], [4.8097343447, 1.6180339887], [4.2219490925, 2.4270509831], [3.3559236887, 1.9270509831], [2.4898982849, 2.4270509831], [1.9021130326, 1.6180339887]]}] },
+  "P-9": { name:"Propia · Estrellas de 10 y 6 (b)", T1:[4.8097343447, -0.0], T2:[1.486289651, 4.5743291902], rec:72, origin:{"config": "polígono regular de 10 lados con 2 de 6 lados en contacto lado con lado", "ref": "C-74"}, labels:{"pA": "Relleno A (14 lados)"}, polys:[[-0.0, -0.0, 10, 18.0], [2.4048671724, -0.0, 6, -150.0], [0.7431448255, 2.2871645951, 6, -78.0], {"t": "pA", "v": [[0.9510565163, 1.3090169944], [1.5388417686, 0.5], [2.4048671724, 1.0], [3.2708925762, 0.5], [3.8586778284, 1.3090169944], [4.8097343447, 1.6180339887], [4.6018226539, 2.5961815895], [5.3449674794, 3.2653121958], [4.7571822271, 4.0743291902], [3.8911568233, 3.5743291902], [3.0251314195, 4.0743291902], [2.4373461672, 3.2653121958], [1.486289651, 2.9562952015], [1.6942013418, 1.9781476007]]}] },
+  "P-10": { name:"Propia · Estrellas de 11 en dos orientaciones", T1:[1.9909136303, -3.0979220787], T2:[4.6825065847, 4.0574150523], rec:67.5, origin:{"config": "polígono regular de 11 lados y su copia girada 180°, en contacto lado con lado", "ref": "C-3"}, labels:{"pA": "Relleno A (16 lados)"}, polys:[[-0.0, -0.0, 11, 16.36363636], [3.4056872389, 0.0, 11, -163.63636364], {"t": "pA", "v": [[1.162202802, 1.3412535328], [1.7028436194, 0.5], [2.2434844369, 1.3412535328], [3.1531164323, 1.7566685458], [4.1429378741, 1.6143537076], [4.8986874485, 0.9594929736], [5.1804200053, 1.9189859472], [5.9361695797, 2.5738466812], [6.9259910216, 2.7161615194], [6.3853502041, 3.5574150523], [5.8447093867, 2.7161615194], [4.9350773913, 2.3007465064], [3.9452559494, 2.4430613447], [3.1895063751, 3.0979220787], [2.9077738182, 2.138429105], [2.1520242439, 1.4835683711]]}] },
+  "P-11": { name:"Propia · Estrellas de 12 y 4 (a)", T1:[0.0, 3.7320508076], T2:[-4.7320508076, 0.0], rec:72, origin:{"config": "polígono regular de 12 lados con 1 de 4 lados en contacto lado con lado", "ref": "C-56"}, labels:{"pA": "Relleno A (10 lados)"}, polys:[[-0.0, -0.0, 12, 15.0], [2.3660254038, 0.0, 4, -135.0], {"t": "pA", "v": [[1.3660254038, 1.3660254038], [1.8660254038, 0.5], [2.8660254038, 0.5], [3.3660254038, 1.3660254038], [4.2320508076, 1.8660254038], [3.3660254038, 2.3660254038], [2.8660254038, 3.2320508076], [1.8660254038, 3.2320508076], [1.3660254038, 2.3660254038], [0.5, 1.8660254038]]}] },
+  "P-12": { name:"Propia · Estrellas de 12 y 4 (b)", T1:[4.7320508076, -0.0], T2:[2.3660254038, 4.0980762114], rec:72, origin:{"config": "polígono regular de 12 lados con 2 de 4 lados en contacto lado con lado", "ref": "C-59"}, labels:{"pA": "Relleno A (12 lados)"}, polys:[[-0.0, -0.0, 12, 15.0], [2.3660254038, 0.0, 4, -135.0], [1.1830127019, 2.0490381057, 4, -75.0], {"t": "pA", "v": [[1.3660254038, 1.3660254038], [1.8660254038, 0.5], [2.8660254038, 0.5], [3.3660254038, 1.3660254038], [4.2320508076, 1.8660254038], [5.2320508076, 1.8660254038], [5.7320508076, 2.7320508076], [5.2320508076, 3.5980762114], [4.2320508076, 3.5980762114], [3.7320508076, 2.7320508076], [2.8660254038, 2.2320508076], [1.8660254038, 2.2320508076]]}] },
+  "P-13": { name:"Propia · Estrellas de 12 y 6 (a)", T1:[4.0980762114, -2.3660254038], T2:[4.0980762114, 2.3660254038], rec:54, origin:{"config": "polígono regular de 12 lados con 2 de 6 lados en contacto lado con lado", "ref": "C-29"}, labels:{"pA": "Relleno A (4 lados)"}, polys:[[-0.0, -0.0, 12, 15.0], [2.7320508076, -0.0, 6, -150.0], [1.3660254038, 2.3660254038, 6, -90.0], {"t": "pA", "v": [[1.3660254038, 1.3660254038], [1.8660254038, 0.5], [2.7320508076, 1.0], [2.2320508076, 1.8660254038]]}, {"t": "pA", "v": [[-0.5, 1.8660254038], [0.5, 1.8660254038], [0.5, 2.8660254038], [-0.5, 2.8660254038]]}, {"t": "pA", "v": [[-1.8660254038, 0.5], [-1.3660254038, 1.3660254038], [-2.2320508076, 1.8660254038], [-2.7320508076, 1.0]]}] },
+  "P-14": { name:"Propia · Estrellas de 12 y 6 (b)", T1:[4.0980762114, -2.3660254038], T2:[4.0980762114, 2.3660254038], rec:72, origin:{"config": "polígono regular de 12 lados con 1 de 6 lados en contacto lado con lado", "ref": "C-28"}, labels:{"pA": "Relleno A (12 lados)"}, polys:[[-0.0, -0.0, 12, 15.0], [2.7320508076, -0.0, 6, -150.0], {"t": "pA", "v": [[1.3660254038, 1.3660254038], [1.8660254038, 0.5], [2.7320508076, 1.0], [2.2320508076, 1.8660254038], [2.2320508076, 2.8660254038], [2.7320508076, 3.7320508076], [1.8660254038, 4.2320508076], [1.3660254038, 3.3660254038], [0.5, 2.8660254038], [-0.5, 2.8660254038], [-0.5, 1.8660254038], [0.5, 1.8660254038]]}] },
+  "P-15": { name:"Propia · Estrellas de 12 y 8 (a)", T1:[3.073132185, -3.073132185], T2:[3.073132185, 3.073132185], rec:54, origin:{"config": "polígono regular de 12 lados con 1 de 8 lados en contacto lado con lado", "ref": "C-23"}, labels:{"pA": "Relleno A (6 lados)"}, polys:[[-0.0, -0.0, 12, 15.0], [3.073132185, 0.0, 8, -157.5], {"t": "pA", "v": [[1.3660254038, 1.3660254038], [1.8660254038, 0.5], [2.573132185, 1.2071067812], [1.7071067812, 1.7071067812], [1.2071067812, 2.573132185], [0.5, 1.8660254038]]}, {"t": "pA", "v": [[-1.3660254038, 1.3660254038], [-0.5, 1.8660254038], [-1.2071067812, 2.573132185], [-1.7071067812, 1.7071067812], [-2.573132185, 1.2071067812], [-1.8660254038, 0.5]]}] },
+  "P-16": { name:"Propia · Estrellas de 12 y 8 (b)", T1:[0.0, 3.7320508076], T2:[-6.1462643699, 0.0], rec:72, origin:{"config": "polígono regular de 12 lados con 1 de 8 lados en contacto lado con lado", "ref": "C-22"}, labels:{"pA": "Relleno A (14 lados)"}, polys:[[-0.0, -0.0, 12, 15.0], [3.073132185, 0.0, 8, -157.5], {"t": "pA", "v": [[1.3660254038, 1.3660254038], [1.8660254038, 0.5], [2.573132185, 1.2071067812], [3.573132185, 1.2071067812], [4.2802389662, 0.5], [4.7802389662, 1.3660254038], [5.6462643699, 1.8660254038], [4.7802389662, 2.3660254038], [4.2802389662, 3.2320508076], [3.573132185, 2.5249440264], [2.573132185, 2.5249440264], [1.8660254038, 3.2320508076], [1.3660254038, 2.3660254038], [0.5, 1.8660254038]]}] },
+  "P-18": { name:"Propia · Estrellas de 15 en dos orientaciones", T1:[5.1963978651, -4.6788576535], T2:[4.1100548983, 5.6570052542], rec:72, origin:{"config": "polígono regular de 15 lados y su copia girada 180°, en contacto lado con lado", "ref": "C-8"}, labels:{"pA": "Relleno A (24 lados)"}, polys:[[0.0, 0.0, 15, 12.0], [4.7046301095, -0.0, 15, -168.0], {"t": "pA", "v": [[1.9455784117, 1.4135454576], [2.3523150547, 0.5], [2.7590516978, 1.4135454576], [3.5021965233, 2.082676064], [4.4532530396, 2.3916930584], [5.447774935, 2.2871645951], [6.3138003387, 1.7871645951], [6.901585591, 0.9781476007], [7.1094972819, 1.9562952015], [7.6972825341, 2.7653121958], [8.5633079379, 3.2653121958], [7.6122514216, 3.5743291902], [6.8691065962, 4.2434597966], [6.4623699531, 5.1570052542], [6.05563331, 4.2434597966], [5.3124884845, 3.5743291902], [4.3614319682, 3.2653121958], [3.3669100729, 3.3698406591], [2.5008846691, 3.8698406591], [1.9130994168, 4.6788576535], [1.705187726, 3.7007100528], [1.1174024737, 2.8916930584], [0.2513770699, 2.3916930584], [1.2024335862, 2.082676064]]}] },
+  "P-19": { name:"Propia · Estrellas de 16 y 6", T1:[1.9238795325, 4.6446560598], T2:[-4.8355107672, 4.6446560598], rec:72, origin:{"config": "polígono regular de 16 lados con 1 de 6 lados en contacto lado con lado", "ref": "C-62"}, labels:{"pA": "Relleno A (16 lados)"}, polys:[[0.0, 0.0, 16, 11.25], [3.3796951498, -0.0, 6, -150.0], {"t": "pA", "v": [[2.1309863137, 1.4238795325], [2.5136697461, 0.5], [3.3796951498, 1.0], [4.2457205536, 0.5], [4.628403986, 1.4238795325], [5.3355107672, 2.1309863137], [6.2593902997, 2.5136697461], [7.2593902997, 2.5136697461], [6.5522835185, 3.2207765272], [6.1696000861, 4.1446560598], [5.3035746824, 3.6446560598], [4.4375492786, 4.1446560598], [4.0548658462, 3.2207765272], [3.347759065, 2.5136697461], [2.4238795325, 2.1309863137], [1.4238795325, 2.1309863137]]}] },
+  "P-20": { name:"Propia · Estrellas de 16 y 8 (a)", T1:[3.7207765272, -3.7207765272], T2:[6.3517628409, 2.6309863137], rec:54, origin:{"config": "polígono regular de 16 lados con 2 de 8 lados en contacto lado con lado", "ref": "C-15"}, labels:{"pA": "Relleno A (6 lados)", "pB": "Relleno B (8 lados)"}, polys:[[0.0, 0.0, 16, 11.25], [3.7207765272, 0.0, 8, -157.5], [2.6309863137, 2.6309863137, 8, -112.5], {"t": "pA", "v": [[2.1309863137, 1.4238795325], [2.5136697461, 0.5], [3.2207765272, 1.2071067812], [4.2207765272, 1.2071067812], [3.8380930949, 2.1309863137], [3.1309863137, 1.4238795325]]}, {"t": "pA", "v": [[0.5, 2.5136697461], [1.4238795325, 2.1309863137], [1.4238795325, 3.1309863137], [2.1309863137, 3.8380930949], [1.2071067812, 4.2207765272], [1.2071067812, 3.2207765272]]}, {"t": "pB", "v": [[-1.4238795325, 2.1309863137], [-0.5, 2.5136697461], [-1.2071067812, 3.2207765272], [-1.5897902136, 2.2968969947], [-2.2968969947, 1.5897902136], [-3.2207765272, 1.2071067812], [-2.5136697461, 0.5], [-2.1309863137, 1.4238795325]]}] },
+  "P-21": { name:"Propia · Estrellas de 16 y 8 (b)", T1:[3.7207765272, -3.7207765272], T2:[3.7207765272, 3.7207765272], rec:54, origin:{"config": "polígono regular de 16 lados con 1 de 8 lados en contacto lado con lado", "ref": "C-13"}, labels:{"pA": "Relleno A (8 lados)"}, polys:[[0.0, 0.0, 16, 11.25], [3.7207765272, 0.0, 8, -157.5], {"t": "pA", "v": [[2.1309863137, 1.4238795325], [2.5136697461, 0.5], [3.2207765272, 1.2071067812], [2.2968969947, 1.5897902136], [1.5897902136, 2.2968969947], [1.2071067812, 3.2207765272], [0.5, 2.5136697461], [1.4238795325, 2.1309863137]]}, {"t": "pA", "v": [[-1.4238795325, 2.1309863137], [-0.5, 2.5136697461], [-1.2071067812, 3.2207765272], [-1.5897902136, 2.2968969947], [-2.2968969947, 1.5897902136], [-3.2207765272, 1.2071067812], [-2.5136697461, 0.5], [-2.1309863137, 1.4238795325]]}] },
+  "P-22": { name:"Propia · Estrellas de 16 y 12", T1:[4.3796951498, -4.3796951498], T2:[4.3796951498, 4.3796951498], rec:67.5, origin:{"config": "polígono regular de 16 lados con 1 de 12 lados en contacto lado con lado", "ref": "C-130"}, labels:{"pA": "Relleno A (10 lados)"}, polys:[[0.0, 0.0, 16, 11.25], [4.3796951498, -0.0, 12, -165.0], {"t": "pA", "v": [[2.1309863137, 1.4238795325], [2.5136697461, 0.5], [3.0136697461, 1.3660254038], [3.8796951498, 1.8660254038], [2.9558156173, 2.2487088361], [2.2487088361, 2.9558156173], [1.8660254038, 3.8796951498], [1.3660254038, 3.0136697461], [0.5, 2.5136697461], [1.4238795325, 2.1309863137]]}, {"t": "pA", "v": [[-1.4238795325, 2.1309863137], [-0.5, 2.5136697461], [-1.3660254038, 3.0136697461], [-1.8660254038, 3.8796951498], [-2.2487088361, 2.9558156173], [-2.9558156173, 2.2487088361], [-3.8796951498, 1.8660254038], [-3.0136697461, 1.3660254038], [-2.5136697461, 0.5], [-2.1309863137, 1.4238795325]]}] },
+  "P-23": { name:"Propia · Estrellas de 18 y 6 (a)", T1:[5.5524994704, -3.2057370639], T2:[5.5524994704, 3.2057370639], rec:54, origin:{"config": "polígono regular de 18 lados con 2 de 6 lados en contacto lado con lado", "ref": "C-84"}, labels:{"pA": "Relleno A (6 lados)"}, polys:[[-0.0, 0.0, 18, 10.0], [3.7016663136, -0.0, 6, -150.0], [1.8508331568, 3.2057370639, 6, -90.0], {"t": "pA", "v": [[2.4936207665, 1.4396926208], [2.8356409098, 0.5], [3.7016663136, 1.0], [3.0588787039, 1.7660444431], [2.7168585606, 2.7057370639], [1.8508331568, 2.2057370639]]}, {"t": "pA", "v": [[0.0, 2.8793852416], [0.984807753, 2.7057370639], [0.984807753, 3.7057370639], [0.0, 3.5320888862], [-0.984807753, 3.7057370639], [-0.984807753, 2.7057370639]]}, {"t": "pA", "v": [[-2.4936207665, 1.4396926208], [-1.8508331568, 2.2057370639], [-2.7168585606, 2.7057370639], [-3.0588787039, 1.7660444431], [-3.7016663136, 1.0], [-2.8356409098, 0.5]]}] },
+  "P-24": { name:"Propia · Estrellas de 18 y 6 (b)", T1:[-2.8356409098, 4.9114741278], T2:[-5.5524994704, -3.2057370639], rec:72, origin:{"config": "polígono regular de 18 lados con 2 de 6 lados en contacto lado con lado", "ref": "C-83"}, labels:{"pA": "Relleno A (6 lados)", "pB": "Relleno B (14 lados)"}, polys:[[-0.0, 0.0, 18, 10.0], [3.7016663136, -0.0, 6, -150.0], [1.8508331568, 3.2057370639, 6, -90.0], {"t": "pA", "v": [[2.4936207665, 1.4396926208], [2.8356409098, 0.5], [3.7016663136, 1.0], [3.0588787039, 1.7660444431], [2.7168585606, 2.7057370639], [1.8508331568, 2.2057370639]]}, {"t": "pB", "v": [[0.0, 2.8793852416], [0.984807753, 2.7057370639], [0.984807753, 3.7057370639], [1.8508331568, 4.2057370639], [2.7168585606, 3.7057370639], [3.0588787039, 4.6454296847], [3.7016663136, 5.4114741278], [2.7168585606, 5.2378259501], [1.7320508076, 5.4114741278], [1.7320508076, 4.4114741278], [0.8660254038, 3.9114741278], [0.0, 4.4114741278], [-0.3420201433, 3.471781507], [-0.984807753, 2.7057370639]]}] },
+  "P-25": { name:"Propia · Estrellas de 18 y 9 (a)", T1:[6.3140694293, -3.6454296847], T2:[6.3140694293, 3.6454296847], rec:67.5, origin:{"config": "polígono regular de 18 lados con 2 de 9 lados en contacto lado con lado", "ref": "C-49"}, labels:{"pA": "Relleno A (8 lados)"}, polys:[[-0.0, 0.0, 18, 10.0], [4.2093796195, -0.0, 9, -160.0], [2.1046898098, 3.6454296847, 9, -100.0], {"t": "pA", "v": [[2.4936207665, 1.4396926208], [2.8356409098, 0.5], [3.4784285195, 1.2660444431], [4.4632362725, 1.4396926208], [3.8204486628, 2.2057370639], [3.4784285195, 3.1454296847], [2.8356409098, 2.3793852416], [1.8508331568, 2.2057370639]]}, {"t": "pA", "v": [[0.0, 2.8793852416], [0.984807753, 2.7057370639], [0.6427876097, 3.6454296847], [0.984807753, 4.5851223055], [0.0, 4.4114741278], [-0.984807753, 4.5851223055], [-0.6427876097, 3.6454296847], [-0.984807753, 2.7057370639]]}, {"t": "pA", "v": [[-2.4936207665, 1.4396926208], [-1.8508331568, 2.2057370639], [-2.8356409098, 2.3793852416], [-3.4784285195, 3.1454296847], [-3.8204486628, 2.2057370639], [-4.4632362725, 1.4396926208], [-3.4784285195, 1.2660444431], [-2.8356409098, 0.5]]}] },
+  "P-26": { name:"Propia · Estrellas de 18 y 9 (b)", T1:[-0.984807753, 5.5851223055], T2:[-8.1649025861, 1.4396926208], rec:67.5, origin:{"config": "polígono regular de 18 lados con 2 de 9 lados en contacto lado con lado", "ref": "C-44"}, labels:{"pA": "Relleno A (3 lados)", "pB": "Relleno B (10 lados)"}, polys:[[-0.0, 0.0, 18, 10.0], [4.2093796195, -0.0, 9, -160.0], [3.2245718665, 2.7057370639, 9, -120.0], {"t": "pA", "v": [[2.4936207665, 1.4396926208], [2.8356409098, 0.5], [3.4784285195, 1.2660444431]]}, {"t": "pB", "v": [[0.984807753, 2.7057370639], [1.8508331568, 2.2057370639], [1.8508331568, 3.2057370639], [2.4936207665, 3.971781507], [3.4784285195, 4.1454296847], [2.4936207665, 4.3190778624], [1.8508331568, 5.0851223055], [1.5088130135, 4.1454296847], [0.8660254038, 3.3793852416], [0.0, 2.8793852416]]}, {"t": "pB", "v": [[-1.8508331568, 2.2057370639], [-0.984807753, 2.7057370639], [-1.969615506, 2.8793852416], [-2.8356409098, 3.3793852416], [-3.4784285195, 4.1454296847], [-3.8204486628, 3.2057370639], [-4.6864740666, 2.7057370639], [-3.7016663136, 2.8793852416], [-2.8356409098, 2.3793852416], [-2.4936207665, 1.4396926208]]}, {"t": "pA", "v": [[-2.8356409098, -0.5], [-2.8356409098, 0.5], [-3.7016663136, 0.0]]}] },
+  "P-27": { name:"Propia · Estrellas de 20 y 10", T1:[6.1467740422, -4.4658927517], T2:[2.347858763, 7.2259662624], rec:72, origin:{"config": "polígono regular de 20 lados con 1 de 10 lados en contacto lado con lado", "ref": "C-121"}, labels:{"pA": "Relleno A (24 lados)"}, polys:[[-0.0, 0.0, 20, 9.0], [4.6957175259, 0.0, 10, -162.0], {"t": "pA", "v": [[2.847858763, 1.4510565163], [3.1568757573, 0.5], [3.7446610096, 1.3090169944], [4.6957175259, 1.6180339887], [5.6467740422, 1.3090169944], [5.3377570478, 2.2600735107], [5.3377570478, 3.2600735107], [5.6467740422, 4.211130027], [6.2345592945, 5.0201470213], [7.0435762889, 5.6079322736], [6.0925197726, 5.916949268], [5.5047345203, 6.7259662624], [5.1957175259, 5.7749097461], [4.6079322736, 4.9658927517], [3.7989152793, 4.3781074994], [2.847858763, 4.069090505], [1.847858763, 4.069090505], [0.8968022467, 4.3781074994], [0.0877852523, 4.9658927517], [0.0877852523, 3.9658927517], [-0.5, 3.1568757573], [0.5, 3.1568757573], [1.4510565163, 2.847858763], [2.2600735107, 2.2600735107]]}] },
+  "P-28": { name:"Propia · Estrellas de 24 y 8", T1:[-2.9318516526, 7.0781160225], T2:[-10.0099676751, 0.0], rec:72, origin:{"config": "polígono regular de 24 lados con 2 de 8 lados en contacto lado con lado", "ref": "C-107"}, labels:{"pA": "Relleno A (16 lados)"}, polys:[[-0.0, -0.0, 24, 7.5], [5.0049838375, 0.0, 8, -157.5], [3.5390580113, 3.5390580113, 8, -112.5], {"t": "pA", "v": [[3.5390580113, 1.4659258263], [3.7978770564, 0.5], [4.5049838375, 1.2071067812], [5.5049838375, 1.2071067812], [6.2120906187, 0.5], [6.4709096638, 1.4659258263], [6.9709096638, 2.3319512301], [7.678016445, 3.0390580113], [8.5440418488, 3.5390580113], [7.5781160225, 3.2802389662], [6.5781160225, 3.2802389662], [5.6121901962, 3.5390580113], [4.7461647924, 4.0390580113], [4.7461647924, 3.0390580113], [4.0390580113, 2.3319512301], [3.0390580113, 2.3319512301]]}, {"t": "pA", "v": [[1.4659258263, 3.5390580113], [2.3319512301, 3.0390580113], [2.3319512301, 4.0390580113], [3.0390580113, 4.7461647924], [4.0390580113, 4.7461647924], [3.5390580113, 5.6121901962], [3.2802389662, 6.5781160225], [2.573132185, 5.8710092413], [1.573132185, 5.8710092413], [0.8660254038, 6.5781160225], [0.6072063587, 5.6121901962], [0.1072063587, 4.7461647924], [-0.5999004225, 4.0390580113], [-1.4659258263, 3.5390580113], [-0.5, 3.7978770564], [0.5, 3.7978770564]]}] },
+};
+const PALETTES = {
+  fez:{name:"Zellige de Fez", bg:"#ece6d6", band:"#faf7ef", outline:"#1b2a28", line:"#1b2a28", guide:"#9d9174", fill:{3:"#c48a2a",4:"#1d6a58",6:"#28497a",8:"#1d6a58",12:"#28497a"}},
+  almagra:{name:"Almagra y ocre", bg:"#dfcfae", band:"#fbf5e6", outline:"#4e3220", line:"#4e3220", guide:"#8f7553", fill:{3:"#a94b2a",4:"#2c5a69",6:"#c4932f",8:"#3b6644",12:"#a94b2a"}},
+  isfahan:{name:"Isfahán", bg:"#123f6e", band:"#f2efe6", outline:"#08223f", line:"#f2efe6", guide:"#5a86b3", fill:{3:"#e0ad35",4:"#1797a0",6:"#1797a0",8:"#e0ad35",12:"#1797a0"}},
+  noche:{name:"Oro y noche", bg:"#111827", band:"#d6ad55", outline:"#070b14", line:"#d6ad55", guide:"#46516e", fill:{3:"#1d2b4d",4:"#2a1e3f",6:"#1d2b4d",8:"#22355c",12:"#2a1e3f"}},
+  tinta:{name:"Tinta", bg:"#fbfaf6", band:"#fbfaf6", outline:"#141414", line:"#141414", guide:"#bdb9ae", fill:{3:"#e4e1d8",4:"#d3cfc4",6:"#e4e1d8",8:"#d3cfc4",12:"#bdb8ab"}},
+};
+const POLY_NAMES={3:"Triángulos",4:"Cuadrados",6:"Hexágonos",8:"Octógonos",12:"Dodecágonos",10:"Decágonos",5:"Pentágonos",h:"Hexágonos alargados",b:"Pajaritas",r:"Rombos"};
+// las piezas girih que no son regulares se describen por sus vértices: {t:tipo, v:[[x,y],...]}
+for(const k in TILINGS) for(const q of TILINGS[k].polys) if(!Array.isArray(q)){
+  const n=q.v.length; q.c=[q.v.reduce((a,p)=>a+p[0],0)/n, q.v.reduce((a,p)=>a+p[1],0)/n];
+  q.r=Math.max(...q.v.map(p=>Math.hypot(p[0]-q.c[0],p[1]-q.c[1])));
+}
+const ptype=(q)=>Array.isArray(q)?q[2]:q.t;
+const polyName=(n)=>POLY_NAMES[n]||(typeof n==="number"?`Polígonos de ${n} lados`:((TILINGS[state.tiling].labels||{})[n]||String(n)));
+const prad=(q)=>Array.isArray(q)?1/(2*Math.sin(Math.PI/q[2])):q.r;
+const TYPE_ORDER=[12,10,8,6,5,4,3,"h","b","r"], trank=(n)=>{ if(typeof n==="number") return -n; const i=TYPE_ORDER.indexOf(n); return i<0?300+String(n).charCodeAt(String(n).length-1):100+i;};
+const polyTypes=(t)=>[...new Set(TILINGS[t].polys.map(ptype))].sort((a,b)=>trank(a)-trank(b));
+const baseFill=(pal,n)=>n==="c"?pal.fill[3]:(pal.fill[n]||({10:pal.fill[12],5:pal.fill[6],h:pal.fill[8],b:pal.fill[3],r:pal.fill[4]})[n]||(typeof n==="string"?[pal.fill[3],pal.fill[6],pal.fill[8]][n.charCodeAt(n.length-1)%3]:(n>12?pal.fill[12]:pal.fill[4])));
+const fillFor=(pal,n)=>state.custom["f:"+n]||baseFill(pal,n);
+// paleta efectiva: la elegida, con los colores que haya cambiado la persona encima
+const curPal=()=>{const b=PALETTES[state.palette], c=state.custom; return {...b, bg:c.bg||b.bg, band:c.band||b.band, outline:c.outline||b.outline, line:c.line||b.line};};
+// cada color de la paleta que se ha cambiado, con su sustituto (para el color automático y el pincel)
+const colorMap=()=>{const b=PALETTES[state.palette], m={};
+  for(const [k,v] of Object.entries(state.custom)){ const orig=k.startsWith("f:")?baseFill(b,k==="f:c"?"c":(isNaN(+k.slice(2))?k.slice(2):+k.slice(2))):b[k]; if(orig) m[orig.toLowerCase()]=v; }
+  return m;};
+const curAuto=()=>{const m=colorMap(); return (AUTO[state.palette]||AUTO.fez).map(c=>m[c.toLowerCase()]||c);};
+const thetaFor=(n)=>state.perPoly&&state.thetaN[n]!=null?state.thetaN[n]:state.theta;
+const petalLabel=()=>state.petalShape<0.05?"rombo":state.petalShape>0.95?"hexágono":Math.round(state.petalShape*100)+" %";
+const rosetteN=()=>{const m=polyTypes(state.tiling)[0]; return state.rosette&&m>=6?m:0;};
+const clampT=(v)=>Math.max(10,Math.min(85,Math.round(v*2)/2));
+const AUTO={
+  fez:["#1d6a58","#28497a","#c48a2a","#111111","#faf7ef","#a94b2a"],
+  almagra:["#3b6644","#2c5a69","#c4932f","#a94b2a","#4e3220","#fbf5e6"],
+  isfahan:["#123f6e","#1797a0","#e0ad35","#08223f","#f2efe6","#1d6a58"],
+  noche:["#1d2b4d","#2a1e3f","#d6ad55","#22355c","#070b14","#8a6a2e"],
+  tinta:["#141414","#fbfaf6","#d3cfc4","#8f8a7d","#bdb8ab","#e4e1d8"],
+};
+const PRESETS = [
+  {name:"Estrella de 8", s:{tiling:"4.8.8",theta:67.5,delta:0,palette:"fez",style:"lace",fill:true}},
+  {name:"Estrella de 12", s:{tiling:"3.12.12",theta:72,perPoly:true,thetaN:{12:72,3:40},delta:0,palette:"isfahan",style:"lace",fill:true}},
+  {name:"Hexagonal", s:{tiling:"6.6.6",theta:60,delta:0,palette:"almagra",style:"lace",fill:true}},
+  {name:"Rosetas", s:{tiling:"4.6.12",theta:62,delta:0,palette:"noche",style:"lace",fill:true}},
+  {name:"Doble trazo", s:{tiling:"4.8.8",theta:67.5,delta:0,palette:"tinta",style:"lace",fill:false,width:8}},
+  {name:"Roseta de 12", s:{tiling:"3.12.12",theta:72,perPoly:true,thetaN:{12:72,3:40},delta:0,rosette:true,rosetteSize:0.6,petalShape:0.8,autoColor:true,autoSeed:1,palette:"fez",style:"lace",fill:true}},
+  {name:"Girih", s:{tiling:"G-dpr",theta:54,delta:0,palette:"almagra",style:"lace",fill:true}},
+  {name:"Celosía", s:{tiling:"3.4.6.4",theta:58,delta:0,palette:"tinta",style:"lines",fill:false}},
+];
+const state = {expSize:"A4",expOrient:"p",expMargin:false,animPeriod:10,join:"miter",outline:0.22,custom:{},rosette:false,rosetteSize:0.6,petalShape:0.6,autoColor:false,autoSeed:0,paintBy:{},tool:null,brush:"#1d6a58",paintRep:true,perPoly:false,thetaN:{},tiling:"4.8.8",theta:67.5,delta:0,scale:56,rot:0,style:"lace",width:6,fill:true,guide:false,palette:"fez",panX:0,panY:0};
+
+/* ---------- geometría ---------- */
+function polyPts(cx,cy,n,startDeg){
+  const R=1/(2*Math.sin(Math.PI/n)), a0=startDeg*Math.PI/180, out=[];
+  for(let k=0;k<n;k++){const a=a0+2*Math.PI*k/n; out.push([cx+R*Math.cos(a), cy+R*Math.sin(a)]);}
+  return out;
+}
+function viewXform(W,H){
+  const s=state.scale, th=state.rot*Math.PI/180, c=Math.cos(th), sn=Math.sin(th);
+  const cx=W/2+state.panX, cy=H/2+state.panY;
+  return {s,c,sn,cx,cy,
+    toS:(x,y)=>[cx+s*(c*x-sn*y), cy+s*(sn*x+c*y)],
+    toP:(x,y)=>{const dx=(x-cx)/s, dy=(y-cy)/s; return [c*dx+sn*dy, -sn*dx+c*dy];},
+    vec:(v)=>[s*(c*v[0]-sn*v[1]), s*(sn*v[0]+c*v[1])]};
+}
+function buildTiles(W,H){
+  const {s,c,sn,cx,cy,toS}=viewXform(W,H);
+  const dx=(W/2-cx)/s, dy=(H/2-cy)/s, qx=c*dx+sn*dy, qy=-sn*dx+c*dy;
+  const t=TILINGS[state.tiling], [a,b]=t.T1, [d,e]=t.T2, det=a*e-b*d;
+  const cellR=Math.hypot(a,b)+Math.hypot(d,e);
+  const Rp=Math.hypot(W,H)/2/s+cellR+2;
+  const i0=Math.round((qx*e-qy*d)/det), j0=Math.round((a*qy-b*qx)/det);
+  const minH=Math.abs(det)/Math.max(Math.hypot(a,b),Math.hypot(d,e));
+  const N=Math.ceil(Rp/minH)+1, tiles=[];
+  const Rmax=Math.max(...t.polys.map(prad));
+  const M=(0.5*cellR+2*Rmax+1.5)*s;
+  for(let i=-N;i<=N;i++)for(let j=-N;j<=N;j++){
+    const ox=(i0+i)*a+(j0+j)*d, oy=(i0+i)*b+(j0+j)*e;
+    if(Math.hypot(ox-qx,oy-qy)>Rp) continue;
+    for(const q of t.polys){
+      // solo los polígonos cerca de la vista: el rectángulo visible más un margen que deja completos
+      // los huecos que usa el color automático (media celda) y los polígonos vecinos
+      const [px,py]=Array.isArray(q)?q:q.c;
+      const c=toS(ox+px,oy+py); if(c[0]<-M||c[0]>W+M||c[1]<-M||c[1]>H+M) continue;
+      if(Array.isArray(q)) tiles.push({n:q[2], pts:polyPts(ox+px,oy+py,q[2],q[3]).map(p=>toS(p[0],p[1]))});
+      else tiles.push({n:q.t, pts:q.v.map(p=>toS(ox+p[0],oy+p[1]))});
+    }
+  }
+  return tiles;
+}
+/* Piezas irregulares (girih): de cada punto medio salen dos rayos inclinados θ hacia dentro; cada rayo se une
+   con el primero que encuentra de frente (el par que se corta antes), o va recto si dos rayos caen en la misma recta.
+   En los polígonos regulares esta regla coincide con la de hankin(). */
+function hankinGeneral(tile,theta,delta,segs){
+  const P=tile.pts, n=P.length; let A=0;
+  for(let i=0;i<n;i++){const a=P[i], b=P[(i+1)%n]; A+=a[0]*b[1]-b[0]*a[1];}
+  const ct=Math.cos(theta), st=Math.sin(theta), R=[];
+  for(let k=0;k<n;k++){
+    const a=P[k], b=P[(k+1)%n], L=Math.hypot(b[0]-a[0],b[1]-a[1]), ux=(b[0]-a[0])/L, uy=(b[1]-a[1])/L;
+    const mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, dd=delta*L, nx=A>0?-uy:uy, ny=A>0?ux:-ux;
+    for(const sg of [1,-1]){
+      const vx=sg*ux, vy=sg*uy, r1=[vx*ct-vy*st, vx*st+vy*ct], r2=[vx*ct+vy*st, -vx*st+vy*ct];
+      const r=(r1[0]*nx+r1[1]*ny)>0?r1:r2;
+      R.push({k, p:[mx+dd*vx, my+dd*vy], r});
+    }
+  }
+  const cands=[];
+  for(let i=0;i<R.length;i++)for(let j=i+1;j<R.length;j++){
+    const a=R[i], b=R[j]; if(a.k===b.k) continue;
+    const den=a.r[0]*b.r[1]-a.r[1]*b.r[0], wx=b.p[0]-a.p[0], wy=b.p[1]-a.p[1], wl=Math.hypot(wx,wy);
+    if(Math.abs(den)<1e-9){
+      // misma recta y de frente: un tramo recto entre los dos arranques
+      if(wl>1e-9 && Math.abs(wx*a.r[1]-wy*a.r[0])<1e-6*wl && wx*a.r[0]+wy*a.r[1]>0 && a.r[0]*b.r[0]+a.r[1]*b.r[1]<0)
+        cands.push({key:wl/2, i, j, X:null});
+      continue;
+    }
+    const t=(wx*b.r[1]-wy*b.r[0])/den, u=(wx*a.r[1]-wy*a.r[0])/den;
+    if(t<=1e-9||u<=1e-9) continue;
+    const X=[a.p[0]+t*a.r[0], a.p[1]+t*a.r[1]];
+    if(!inPoly(P,X[0],X[1])) continue;
+    cands.push({key:Math.max(t,u), i, j, X});
+  }
+  cands.sort((x,y)=>x.key-y.key);
+  const used=new Set();
+  for(const c of cands){
+    if(used.has(c.i)||used.has(c.j)) continue;
+    used.add(c.i); used.add(c.j);
+    if(c.X) segs.push([R[c.i].p,c.X],[R[c.j].p,c.X]); else segs.push([R[c.i].p,R[c.j].p]);
+  }
+  // rayos que se han quedado sin pareja (piezas grandes y cóncavas con ciertos ángulos): se unen entre sí
+  // con un tramo recto que quede dentro de la pieza, empezando por los más cercanos, para que la cinta no quede cortada
+  // (si los dos rayos de un mismo punto medio se quedan sin pareja, la cinta de la pieza vecina pasa recta y no hay que tocar nada;
+  //  solo se unen los rayos «solitarios», cuyo compañero del mismo punto sí tiene pareja)
+  const left=R.map((r,i)=>i).filter(i=>!used.has(i)&&(delta>0||used.has(i^1)));
+  if(left.length>=2){
+    const inside=(a,b)=>{ const mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2; if(!inPoly(P,mx,my)) return false;
+      for(let k=0;k<n;k++){ if(segCross(a,b,P[k],P[(k+1)%n])) return false; } return true; };
+    const pairs=[];
+    for(let x=0;x<left.length;x++)for(let y=x+1;y<left.length;y++){ const a=R[left[x]], b=R[left[y]]; if(a.k===b.k) continue;
+      if(inside(a.p,b.p)) pairs.push([Math.hypot(a.p[0]-b.p[0],a.p[1]-b.p[1]),left[x],left[y]]); }
+    pairs.sort((u,v)=>u[0]-v[0]);
+    for(const [,i,j] of pairs){ if(used.has(i)||used.has(j)) continue; used.add(i); used.add(j); segs.push([R[i].p,R[j].p]); }
+  }
+}
+function lineX(p,dp,q,dq){
+  const den=dp[0]*dq[1]-dp[1]*dq[0]; if(Math.abs(den)<1e-9) return null;
+  const wx=q[0]-p[0], wy=q[1]-p[1];
+  const t=(wx*dq[1]-wy*dq[0])/den, u=(wx*dp[1]-wy*dp[0])/den;
+  if(t<=0||u<=0) return null;
+  return [p[0]+t*dp[0], p[1]+t*dp[1]];
+}
+function hankin(tile,theta,delta,segs,stars,ros){
+  const P=tile.pts, n=P.length; let gx=0,gy=0;
+  for(const p of P){gx+=p[0];gy+=p[1];} gx/=n; gy/=n;
+  const Rc=Math.hypot(P[0][0]-gx,P[0][1]-gy);
+  const ct=Math.cos(theta), st=Math.sin(theta), E=[];
+  for(let k=0;k<n;k++){
+    const A=P[k], B=P[(k+1)%n], L=Math.hypot(B[0]-A[0],B[1]-A[1]);
+    const ux=(B[0]-A[0])/L, uy=(B[1]-A[1])/L, mx=(A[0]+B[0])/2, my=(A[1]+B[1])/2, dd=delta*L;
+    const inward=(vx,vy)=>{const r1=[vx*ct-vy*st, vx*st+vy*ct], r2=[vx*ct+vy*st, -vx*st+vy*ct];
+      return (r1[0]*(gx-mx)+r1[1]*(gy-my))>0?r1:r2;};
+    E.push({sp:[mx+dd*ux,my+dd*uy], sm:[mx-dd*ux,my-dd*uy], dp:inward(ux,uy), dm:inward(-ux,-uy)});
+  }
+  const star=[], Xv=new Array(n).fill(null), seg0=segs.length;
+  for(let k=0;k<n;k++){
+    const e0=E[k], e1=E[(k+1)%n];
+    let X=lineX(e0.sp,e0.dp,e1.sm,e1.dm);
+    star.push(e0.sm,e0.sp);
+    // caso degenerado: los dos rayos caen sobre la misma recta (p. ej. cuadrados a 45°)
+    // o se cortan lejísimos: se unen los dos puntos de arranque con un tramo recto
+    if(!X || Math.hypot(X[0]-gx,X[1]-gy) > Rc*1.02){
+      const vx=e1.sm[0]-e0.sp[0], vy=e1.sm[1]-e0.sp[1], L=Math.hypot(vx,vy)||1;
+      if((vx*e0.dp[0]+vy*e0.dp[1])/L > 0.98) segs.push([e0.sp,e1.sm]);
+      continue;
+    }
+    segs.push([e0.sp,X],[e1.sm,X]); star.push(X); Xv[(k+1)%n]=X;
+  }
+  stars.push({n:tile.n, pts:star});
+  if(ros && Xv.every(Boolean)) rosette(P,n,gx,gy,Xv,ros.size,ros.shape,segs,stars,segs.slice(seg0));
+}
+/* Roseta: en cada punto X (donde se encuentran los rayos de dos lados vecinos) las líneas no se detienen:
+   se cruzan y siguen hacia dentro hasta un anillo de puntas T (una por lado, en la dirección de su punto medio),
+   vuelven a cruzarse y terminan en los valles V de una estrella central. Entre X, T y V quedan los pétalos. */
+function segCross(p1,p2,q1,q2){
+  const rx=p2[0]-p1[0], ry=p2[1]-p1[1], sx=q2[0]-q1[0], sy=q2[1]-q1[1], den=rx*sy-ry*sx;
+  if(Math.abs(den)<1e-12) return false;
+  const wx=q1[0]-p1[0], wy=q1[1]-p1[1], t=(wx*sy-wy*sx)/den, u=(wx*ry-wy*rx)/den;
+  return t>1e-7&&t<1-1e-7&&u>1e-7&&u<1-1e-7;
+}
+function rosette(P,n,gx,gy,Xv,size,shape,segs,stars,outer){
+  const rX=Math.min(...Xv.map(X=>Math.hypot(X[0]-gx,X[1]-gy)));
+  const rT=size*rX*Math.cos(Math.PI/n);
+  const T=[], V=[];
+  for(let k=0;k<n;k++){const A=P[k], B=P[(k+1)%n], mx=(A[0]+B[0])/2-gx, my=(A[1]+B[1])/2-gy, L=Math.hypot(mx,my)||1; T.push([gx+rT*mx/L, gy+rT*my/L]);}
+  for(let j=0;j<n;j++){
+    // valle j: donde la recta que viene de X(j+1) por T(j) corta la bisectriz del vértice j
+    const wx=P[j][0]-gx, wy=P[j][1]-gy, wl=Math.hypot(wx,wy)||1, w=[wx/wl,wy/wl];
+    const X=Xv[(j+1)%n], t=T[j], d=[t[0]-X[0], t[1]-X[1]];
+    const den=d[0]*w[1]-d[1]*w[0]; let rV=0.5*rT;
+    if(Math.abs(den)>1e-9){const qx=gx-X[0], qy=gy-X[1], u=(qx*w[1]-qy*w[0])/den, v=(qx*d[1]-qy*d[0])/den;
+      if(u>1 && -v>0.08*rT && -v<0.97*rT) rV=-v;}
+    V.push([gx+rV*w[0], gy+rV*w[1]]);
+  }
+  // lado del pétalo de X(j) a T(k): con forma > 0 se dobla en un "hombro" S y baja paralelo al eje del pétalo,
+  // así el pétalo pasa de rombo (4 lados) a hexágono alargado (6 lados)
+  const side=(j,k)=>{
+    const X=Xv[j], t=T[k];
+    if(shape<=0) {segs.push([X,t]); return;}
+    const wx=P[j][0]-gx, wy=P[j][1]-gy, wl=Math.hypot(wx,wy)||1, w=[wx/wl,wy/wl];
+    const proj=(X[0]-t[0])*w[0]+(X[1]-t[1])*w[1];
+    if(proj<=0){segs.push([X,t]); return;}
+    // el hombro no puede salirse del polígono ni sobrepasar la punta exterior del pétalo
+    let h=shape*0.85*proj, S=[t[0]+h*w[0], t[1]+h*w[1]];
+    // ni cortar los rayos exteriores (con ángulos pequeños corren casi pegados al borde)
+    const bad=(S)=>!inPoly(P,S[0],S[1])||outer.some(([a,b])=>segCross(X,S,a,b)||segCross(S,t,a,b));
+    for(let it=0; it<30 && bad(S); it++){ h*=0.8; S=[t[0]+h*w[0], t[1]+h*w[1]]; }
+    if(bad(S)||h<1e-6){segs.push([X,t]); return;}
+    segs.push([X,S],[S,t]);
+  };
+  const center=[];
+  for(let j=0;j<n;j++){
+    side(j,(j-1+n)%n); side(j,j);
+    segs.push([T[j],V[j]],[T[j],V[(j+1)%n]]);
+    center.push(T[j],V[(j+1)%n]);
+  }
+  stars.push({n:"c", pts:center});
+}
+
+/* ---------- nodos, cintas y cruces ---------- */
+function analyse(rawSegs, W, H){
+  // fusionar puntos coincidentes
+  const nodes=[], grid=new Map(), EPS=0.02, GK=(x,y)=>(x+1e5)*2e5+(y+1e5);
+  const nid=(p)=>{
+    const gx=Math.floor(p[0]), gy=Math.floor(p[1]);
+    for(let ix=-1;ix<=1;ix++)for(let iy=-1;iy<=1;iy++){
+      const arr=grid.get(GK(gx+ix,gy+iy)); if(!arr) continue;
+      for(const id of arr){const q=nodes[id]; if(Math.abs(q[0]-p[0])<EPS&&Math.abs(q[1]-p[1])<EPS) return id;}
+    }
+    const id=nodes.length; nodes.push(p); const k=GK(gx,gy);
+    (grid.get(k)||grid.set(k,[]).get(k)).push(id); return id;
+  };
+  const S=[];
+  for(const [p,q] of rawSegs){const a=nid(p), b=nid(q); if(a!==b) S.push([a,b]);}
+  const nS=S.length, ends=new Map(), link=new Int32Array(nS*2).fill(-1);
+  S.forEach((s,i)=>{for(let e=0;e<2;e++){const n=s[e]; (ends.get(n)||ends.set(n,[]).get(n)).push(i*2+e);}});
+  const dirAway=(ref)=>{const s=S[ref>>1], e=ref&1, a=nodes[s[e]], b=nodes[s[1-e]];
+    const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1; return [(b[0]-a[0])/L,(b[1]-a[1])/L];};
+  const nodeCross=[];
+  for(const [n,list] of ends){
+    if(list.length===2){link[list[0]]=list[1]; link[list[1]]=list[0];}
+    else if(list.length===4){
+      // cada extremo se une con el opuesto en el orden angular alrededor del nodo:
+      // así las dos cintas siempre se cruzan, aunque se doblen (ángulos distintos a cada lado)
+      const ang=list.map(r=>{const d=dirAway(r); return Math.atan2(d[1],d[0]);});
+      const ord=[0,1,2,3].sort((x,y)=>ang[x]-ang[y]), pos=[]; ord.forEach((k,i)=>pos[k]=i);
+      const bi=ord[(pos[0]+2)%4], r=[1,2,3].filter(k=>k!==bi);
+      const A=[list[0],list[bi]], B=[list[r[0]],list[r[1]]];
+      link[A[0]]=A[1]; link[A[1]]=A[0]; link[B[0]]=B[1]; link[B[1]]=B[0];
+      const tan=(P)=>{const u=dirAway(P[0]), v=dirAway(P[1]), x=v[0]-u[0], y=v[1]-u[1], L=Math.hypot(x,y)||1; return [x/L,y/L];};
+      const ta=tan(A), tb=tan(B);
+      nodeCross.push({node:n, a:A[0], b:B[0], sin:Math.abs(ta[0]*tb[1]-ta[1]*tb[0])});
+    }
+  }
+  // recorrer cintas
+  const strandOf=new Int32Array(nS).fill(-1), posOf=new Int32Array(nS), entOf=new Int8Array(nS), strands=[];
+  for(let s0=0;s0<nS;s0++){
+    if(strandOf[s0]>=0) continue;
+    let s=s0, ent=0, guard=0;
+    while(guard++<nS){const l=link[s*2+ent]; if(l<0) break; const ns=l>>1, ne=l&1;
+      if(strandOf[ns]>=0) break; s=ns; ent=1-ne; if(s===s0&&ent===0) break;}
+    const id=strands.length, start=s, startEnt=ent, pts=[nodes[S[s][ent]]]; let closed=false, idx=0;
+    while(true){
+      strandOf[s]=id; posOf[s]=idx++; entOf[s]=ent; pts.push(nodes[S[s][1-ent]]);
+      const l=link[s*2+(1-ent)]; if(l<0) break;
+      const ns=l>>1, ne=l&1;
+      if(ns===start&&ne===startEnt){closed=true;break;}
+      if(strandOf[ns]>=0) break;
+      s=ns; ent=ne;
+    }
+    const cl=[0]; for(let k=1;k<pts.length;k++) cl.push(cl[k-1]+Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]));
+    strands.push({pts,cl,closed,total:cl[cl.length-1],passes:[]});
+  }
+  const passes=[], crosses=[];
+  const addCross=(x,y,sin,sa,La,sb,Lb)=>{
+    const c=crosses.length, pa=passes.length;
+    passes.push({st:sa,L:La,c,partner:pa+1,over:-1},{st:sb,L:Lb,c,partner:pa,over:-1});
+    strands[sa].passes.push(pa); strands[sb].passes.push(pa+1);
+    crosses.push({x,y,sin});
+  };
+  const LatNode=(ref)=>{const s=ref>>1, e=ref&1, st=strands[strandOf[s]], i=posOf[s];
+    return e===entOf[s]? st.cl[i] : st.cl[i+1];};
+  for(const nc of nodeCross){
+    const p=nodes[nc.node];
+    addCross(p[0],p[1],nc.sin, strandOf[nc.a>>1], LatNode(nc.a), strandOf[nc.b>>1], LatNode(nc.b));
+  }
+  // intersecciones interiores con rejilla espacial
+  const G=Math.max(24,state.scale), cells=new Map();
+  S.forEach((s,i)=>{const a=nodes[s[0]], b=nodes[s[1]];
+    const x0=Math.floor(Math.min(a[0],b[0])/G), x1=Math.floor(Math.max(a[0],b[0])/G),
+          y0=Math.floor(Math.min(a[1],b[1])/G), y1=Math.floor(Math.max(a[1],b[1])/G);
+    for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++){const k=GK(x,y); (cells.get(k)||cells.set(k,[]).get(k)).push(i);}});
+  const splits=S.map(()=>[]);
+  const Lat=(s,t)=>{const st=strands[strandOf[s]], i=posOf[s], len=st.cl[i+1]-st.cl[i];
+    return st.cl[i]+(entOf[s]===0?t:1-t)*len;};
+  for(const [k,arr] of cells){
+    const cx=Math.floor(k/2e5)-1e5, cy=k-(cx+1e5)*2e5-1e5;
+    for(let m=0;m<arr.length;m++)for(let q=m+1;q<arr.length;q++){
+      const i=arr[m], j=arr[q], si=S[i], sj=S[j];
+      if(si[0]===sj[0]||si[0]===sj[1]||si[1]===sj[0]||si[1]===sj[1]) continue;
+      const p1=nodes[si[0]], p2=nodes[si[1]], q1=nodes[sj[0]], q2=nodes[sj[1]];
+      const rx=p2[0]-p1[0], ry=p2[1]-p1[1], sx=q2[0]-q1[0], sy=q2[1]-q1[1], den=rx*sy-ry*sx;
+      if(Math.abs(den)<1e-9) continue;
+      const wx=q1[0]-p1[0], wy=q1[1]-p1[1], t=(wx*sy-wy*sx)/den, u=(wx*ry-wy*rx)/den;
+      if(t<=1e-6||t>=1-1e-6||u<=1e-6||u>=1-1e-6) continue;
+      const x=p1[0]+t*rx, y=p1[1]+t*ry;
+      if(Math.floor(x/G)!==cx||Math.floor(y/G)!==cy) continue;
+      const sin=Math.abs(den)/(Math.hypot(rx,ry)*Math.hypot(sx,sy));
+      addCross(x,y,sin, strandOf[i], Lat(i,t), strandOf[j], Lat(j,u));
+      const xi=nid([x,y]); splits[i].push([t,xi]); splits[j].push([u,xi]);
+    }
+  }
+  // vecinos a lo largo de cada cinta
+  const nb=passes.map(()=>[]);
+  for(const st of strands){
+    st.passes.sort((a,b)=>passes[a].L-passes[b].L);
+    const P=st.passes, m=P.length;
+    for(let k=0;k<m;k++){
+      const nxt = k+1<m ? P[k+1] : (st.closed&&m>1 ? P[0] : -1);
+      if(nxt>=0&&nxt!==P[k]){nb[P[k]].push(nxt); nb[nxt].push(P[k]);}
+    }
+  }
+  // asignar arriba/abajo alternando. La elección se ancla al patrón, no a la pantalla,
+  // para que no cambie al desplazar, ampliar o girar la vista.
+  const comp=new Int32Array(passes.length).fill(-1), comps=[];
+  for(let p0=0;p0<passes.length;p0++){
+    if(comp[p0]>=0) continue;
+    const id=comps.length, list=[p0]; comp[p0]=id;
+    for(let h=0;h<list.length;h++){const p=list[h]; for(const q of [passes[p].partner,...nb[p]]) if(comp[q]<0){comp[q]=id; list.push(q);}}
+    comps.push(list);
+  }
+  const XF=viewXform(W,H), tl=TILINGS[state.tiling], [la,lb]=tl.T1, [ld,le]=tl.T2, ldet=la*le-lb*ld;
+  // Un salto de dos celdas de la red nunca invierte la alternancia: por eso las referencias usan índices pares.
+  let gx0=1e9,gy0=1e9,gx1=-1e9,gy1=-1e9; for(const q of nodes){if(q[0]<gx0)gx0=q[0]; if(q[0]>gx1)gx1=q[0]; if(q[1]<gy0)gy0=q[1]; if(q[1]>gy1)gy1=q[1];}
+  const mg=3*state.scale, R4=(v)=>Math.round(v*1e4)+0;
+  // ángulo redondeado en [0, periodo): evita que -180° y +180° (o 0° y 360°) cuenten como distintos por un error de 1e-16
+  const RA=(ang,per)=>{let k=R4(((ang%per)+per)%per); return k>=R4(per)?0:k;};
+  const tangent=(pi)=>{const pp=passes[pi], st=strands[pp.st]; let a=pp.L-0.5, b=pp.L+0.5;
+    if(st.closed){a=(a+st.total)%st.total; b=b%st.total;} else {a=Math.max(0,a); b=Math.min(st.total,b);}
+    const A=XF.toP(...pointAt(st,a).p), B=XF.toP(...pointAt(st,b).p);
+    return RA(Math.atan2(B[1]-A[1],B[0]-A[0]),Math.PI);};
+  for(const list of comps){
+    const cs=[...new Set(list.map(p=>passes[p].c))];
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9, mx=0, my=0;
+    for(const c of cs){const k=crosses[c]; if(k.x<x0)x0=k.x; if(k.x>x1)x1=k.x; if(k.y<y0)y0=k.y; if(k.y>y1)y1=k.y; mx+=k.x; my+=k.y;}
+    mx/=cs.length; my/=cs.length;
+    const finite=x0>gx0+mg&&x1<gx1-mg&&y0>gy0+mg&&y1<gy1-mg;
+    // lazo cerrado: se elige por su propia forma (posición relativa a su centro), igual en todas sus copias;
+    // cinta que recorre el patrón: el cruce más cercano a un punto de la red de índices pares. Esa regla depende
+    // solo del patrón (no de la vista) y da lo mismo en cada copia de la cinta, aunque haya varias cintas paralelas.
+    const ref=finite?XF.toP(mx,my):null;
+    let best=-1, bk=null;
+    for(const c of cs){const P=XF.toP(crosses[c].x,crosses[c].y); let dx, dy;
+      if(finite){dx=P[0]-ref[0]; dy=P[1]-ref[1];}
+      else {const u=(P[0]*le-P[1]*ld)/ldet, v=(la*P[1]-lb*P[0])/ldet, i=2*Math.round(u/2), j=2*Math.round(v/2);
+        dx=P[0]-(i*la+j*ld); dy=P[1]-(i*lb+j*le);}
+      const key=finite?[R4(dx),R4(dy)]:[R4(Math.hypot(dx,dy)),RA(Math.atan2(dy,dx),2*Math.PI)];
+      if(!bk||key[0]<bk[0]||(key[0]===bk[0]&&key[1]<bk[1])){bk=key; best=c;}}
+    const pa=2*best, pb=2*best+1, ta=tangent(pa), tb=tangent(pb);
+    const p0=ta<=tb?pa:pb;
+    passes[p0].over=1; const queue=[p0]; let head=0;
+    while(head<queue.length){
+      const p=queue[head++], v=passes[p].over;
+      for(const q of [passes[p].partner, ...nb[p]]){
+        if(passes[q].over<0){passes[q].over=1-v; queue.push(q);}
+      }
+    }
+  }
+  return {strands, passes, crosses, faces:buildFaces(nodes,S,splits)};
+}
+
+/* ---------- huecos: regiones cerradas que dejan las líneas ---------- */
+function buildFaces(nodes,S,splits){
+  const adj=new Map(), seen=new Set();
+  const addE=(a,b)=>{ if(a===b) return; const k=a<b?a*1e7+b:b*1e7+a; if(seen.has(k)) return; seen.add(k);
+    (adj.get(a)||adj.set(a,[]).get(a)).push(b); (adj.get(b)||adj.set(b,[]).get(b)).push(a); };
+  S.forEach((sg,i)=>{ const sp=splits[i].sort((x,y)=>x[0]-y[0]); let prev=sg[0]; for(const [,id] of sp){ addE(prev,id); prev=id; } addE(prev,sg[1]); });
+  const ord=new Map();
+  for(const [v,list] of adj){
+    const p=nodes[v], ang=new Map(list.map(u=>[u,Math.atan2(nodes[u][1]-p[1],nodes[u][0]-p[0])]));
+    list.sort((a,b)=>ang.get(a)-ang.get(b));
+    ord.set(v,{list, idx:new Map(list.map((u,k)=>[u,k]))});
+  }
+  // recorrer cada cara girando siempre hacia el mismo lado
+  const used=new Set(), cycles=[];
+  for(const [u,{list}] of ord) for(const v of list){
+    if(used.has(u*1e7+v)) continue;
+    const pts=[]; let a=u, b=v, guard=0;
+    while(guard++<200000){
+      const k=a*1e7+b; if(used.has(k)) break; used.add(k); pts.push(nodes[a]);
+      const O=ord.get(b), i=O.idx.get(a), n=O.list.length; const c=O.list[(i-1+n)%n]; a=b; b=c;
+    }
+    if(pts.length<3) continue;
+    let A=0; for(let k=0;k<pts.length;k++){const p=pts[k], q=pts[(k+1)%pts.length]; A+=p[0]*q[1]-q[0]*p[1];}
+    cycles.push({pts, A:A/2});
+  }
+  // con este recorrido las caras interiores salen siempre con área positiva y los contornos exteriores con
+  // área negativa (no se decide por mayoría: con muchos lazos sueltos o líneas abiertas la mayoría se equivoca)
+  const sign=1;
+  const faces=[];
+  for(const c of cycles){
+    if(c.A*sign<=1) continue;
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; for(const p of c.pts){if(p[0]<x0)x0=p[0]; if(p[0]>x1)x1=p[0]; if(p[1]<y0)y0=p[1]; if(p[1]>y1)y1=p[1];}
+    faces.push({pts:c.pts, area:Math.abs(c.A), bb:[x0,y0,x1,y1]});
+  }
+  return faces;
+}
+/* ---------- color automático: huecos con la misma forma, mismo color ---------- */
+function shapeOf(pts,s){
+  // quitar puntos repetidos y vértices alineados para que la forma no dependa de cómo se cortó la línea
+  let P=pts.filter((p,i)=>{const q=pts[(i+1)%pts.length]; return Math.hypot(p[0]-q[0],p[1]-q[1])>1e-6;});
+  let changed=true;
+  while(changed&&P.length>3){ changed=false;
+    for(let i=0;i<P.length;i++){const a=P[(i-1+P.length)%P.length], b=P[i], c=P[(i+1)%P.length];
+      const cr=(b[0]-a[0])*(c[1]-b[1])-(b[1]-a[1])*(c[0]-b[0]), L=Math.hypot(b[0]-a[0],b[1]-a[1])*Math.hypot(c[0]-b[0],c[1]-b[1])||1;
+      if(Math.abs(cr)/L<1e-4){P.splice(i,1); changed=true; break;}} }
+  let A=0, per=0, sq=0; const n=P.length, L=[], G=[];
+  for(let i=0;i<n;i++){const a=P[i], b=P[(i+1)%n]; A+=a[0]*b[1]-b[0]*a[1]; const l=Math.hypot(b[0]-a[0],b[1]-a[1]); per+=l; sq+=l*l; L.push(l/s);}
+  for(let i=0;i<n;i++){const a=P[(i-1+n)%n], b=P[i], c=P[(i+1)%n], u=[b[0]-a[0],b[1]-a[1]], v=[c[0]-b[0],c[1]-b[1]];
+    G.push(Math.abs(Math.atan2(u[0]*v[1]-u[1]*v[0], u[0]*v[0]+u[1]*v[1])));}
+  // secuencia cíclica (lado, giro) y su recorrido al revés (reflejo): dos huecos son iguales si una coincide
+  // con un giro de la otra; el área o el perímetro solos no bastan (hay formas distintas con los mismos lados)
+  const seq=G.map((g,i)=>[L[i],g]), rev=[]; for(let k=0;k<n;k++){const v=(n-1-k); rev.push([L[(v-1+n)%n],G[v]]);}
+  const q=(x)=>x.map(([l,g])=>Math.round(l*1000)+":"+Math.round(g*1000)).join(",");
+  let key=null; for(const S of [seq,rev]) for(let r=0;r<n;r++){const k=q(S.slice(r).concat(S.slice(0,r))); if(key===null||k<key) key=k;}
+  return {n, a:Math.abs(A)/2/(s*s), p:per/s, q:sq/(s*s), seq, rev, key};
+}
+function sameShape(x,y){
+  if(x.n!==y.n) return false;
+  const n=x.n, ok=(A,B)=>{for(let r=0;r<n;r++){let m=true; for(let i=0;i<n&&m;i++){const a=A[i], b=B[(i+r)%n];
+    if(Math.abs(a[0]-b[0])>2e-3*Math.max(1,a[0])||Math.abs(a[1]-b[1])>2e-3) m=false;} if(m) return true;} return false;};
+  return ok(x.seq,y.seq)||ok(x.seq,y.rev);
+}
+function lum(h){const v=[1,3,5].map(i=>{const c=parseInt(h.slice(i,i+2),16)/255; return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}); return Math.sqrt(0.2126*v[0]+0.7152*v[1]+0.0722*v[2]);}
+function seeded(seed){ let x=(seed*2654435761+1013904223)>>>0; return ()=>{x=(x*1664525+1013904223)>>>0; return x/4294967296;}; }
+function autoColors(faces,W,H,s,colors){
+  // zona de referencia: la vista ampliada lo bastante para contener una celda completa del patrón;
+  // así el conjunto de formas (y su reparto de colores) no cambia al desplazar, ampliar o girar
+  const t=TILINGS[state.tiling], m=0.5*(Math.hypot(...t.T1)+Math.hypot(...t.T2))*s;
+  const vis=(fc)=>{const cx=(fc.bb[0]+fc.bb[2])/2, cy=(fc.bb[1]+fc.bb[3])/2; return cx>-m&&cx<W+m&&cy>-m&&cy<H+m;};
+  const items=faces.map((fc,i)=>({i,sh:shapeOf(fc.pts,s),v:vis(fc)}));
+  // agrupar formas iguales (mismo nº de lados y área, perímetro y lados casi idénticos)
+  const near=(x,y)=>Math.abs(x-y)<=0.004*Math.max(Math.abs(x),Math.abs(y),1e-9);
+  const sorted=[...items].sort((a,b)=>a.sh.n-b.sh.n||a.sh.a-b.sh.a);
+  const classOf=new Int32Array(faces.length).fill(-1), classes=[];
+  for(const it of sorted){
+    let c=-1;
+    for(let k=classes.length-1;k>=0&&k>=classes.length-12;k--){const r=classes[k].sh;
+      if(r.n===it.sh.n&&near(r.a,it.sh.a)&&near(r.p,it.sh.p)&&near(r.q,it.sh.q)&&sameShape(r,it.sh)){c=k;break;}}
+    if(c<0){c=classes.length; classes.push({sh:it.sh,vis:0,adj:new Set()});}
+    classOf[it.i]=c; if(it.v) classes[c].vis++;
+  }
+  // vecindad entre formas: dos huecos que comparten un tramo de línea
+  const id=new Map(); let nid=0; const pid=(p)=>{let v=id.get(p); if(v===undefined){v=nid++; id.set(p,v);} return v;};
+  const edge=new Map();
+  faces.forEach((fc,i)=>{const P=fc.pts; for(let k=0;k<P.length;k++){const a=pid(P[k]), b=pid(P[(k+1)%P.length]); if(a===b) continue;
+    const key=a<b?a*1e7+b:b*1e7+a, o=edge.get(key); if(o===undefined) edge.set(key,i); else if(o!==i){const ca=classOf[o], cb=classOf[i]; if(ca!==cb){classes[ca].adj.add(cb); classes[cb].adj.add(ca);}}}});
+  // reparto: las formas más presentes eligen primero, evitando el color de sus vecinas
+  const rnd=seeded(state.autoSeed), pal=[...colors];
+  for(let i=pal.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1)); [pal[i],pal[j]]=[pal[j],pal[i]];}
+  const order=classes.map((c,k)=>k).filter(k=>classes[k].vis>0)
+    .sort((a,b)=>{const A=classes[a].sh, B=classes[b].sh; return B.a-A.a||A.n-B.n||B.p-A.p||(A.key<B.key?-1:A.key>B.key?1:0);});
+  const col=new Array(classes.length).fill(null), use=new Map();
+  for(const k of order){
+    const near=[...classes[k].adj].map(j=>col[j]).filter(Boolean), taken=new Set(near);
+    const free=pal.filter(c=>!taken.has(c));
+    let pool=free.length?free:pal;
+    // además de distinto color, que se distinga en claridad de sus vecinas
+    const contrast=(c)=>near.length?Math.min(...near.map(d=>Math.abs(lum(c)-lum(d)))):1;
+    const good=pool.filter(c=>contrast(c)>=0.12);
+    pool=good.length?good:[pool.reduce((b,c)=>contrast(c)>contrast(b)?c:b,pool[0])];
+    col[k]=pool.reduce((best,c)=>(use.get(c)||0)<(use.get(best)||0)?c:best,pool[0]);
+    use.set(col[k],(use.get(col[k])||0)+1);
+  }
+  const color=new Map(); faces.forEach((fc,i)=>{const c=col[classOf[i]]; if(c) color.set(i,c);});
+  return {color, classes:order.length, classOf};
+}
+const FG=64;
+function faceIndex(faces){
+  const grid=new Map();
+  faces.forEach((fc,i)=>{const [x0,y0,x1,y1]=fc.bb;
+    for(let x=Math.floor(x0/FG);x<=Math.floor(x1/FG);x++)for(let y=Math.floor(y0/FG);y<=Math.floor(y1/FG);y++){const k=x+","+y; (grid.get(k)||grid.set(k,[]).get(k)).push(i);}});
+  return grid;
+}
+function inPoly(pts,x,y){
+  let inside=false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){const a=pts[i], b=pts[j];
+    if((a[1]>y)!==(b[1]>y) && x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0]) inside=!inside;}
+  return inside;
+}
+function faceAt(faces,grid,x,y){
+  const list=grid.get(Math.floor(x/FG)+","+Math.floor(y/FG)); if(!list) return -1;
+  let best=-1, ba=Infinity;
+  for(const i of list){const fc=faces[i], b=fc.bb; if(x<b[0]||x>b[2]||y<b[1]||y>b[3]||fc.area>=ba) continue;
+    if(inPoly(fc.pts,x,y)){best=i; ba=fc.area;}}
+  return best;
+}
+// puntos de pintura (en coordenadas del patrón) → huecos que les tocan en la vista actual
+function resolvePaint(W,H,faces,grid){
+  const paints=state.paintBy[state.tiling]||[], color=new Map(), per=[];
+  let bg=null;
+  if(!paints.length) return {color,per,bg};
+  const X=viewXform(W,H), t=TILINGS[state.tiling], A=X.vec(t.T1), B=X.vec(t.T2), det=A[0]*B[1]-A[1]*B[0], m=40;
+  paints.forEach((pt,k)=>{
+    if(pt.bg){ bg=pt.color; per[k]=new Set(); return; }
+    const base=X.toS(pt.x,pt.y), hits=new Set(), pts=[];
+    if(!pt.rep) pts.push(base);
+    else {
+      const lc=(x,y)=>{const dx=x-base[0], dy=y-base[1]; return [(dx*B[1]-dy*B[0])/det, (A[0]*dy-A[1]*dx)/det];};
+      const cs=[lc(-m,-m),lc(W+m,-m),lc(-m,H+m),lc(W+m,H+m)];
+      const i0=Math.floor(Math.min(...cs.map(c=>c[0]))), i1=Math.ceil(Math.max(...cs.map(c=>c[0])));
+      const j0=Math.floor(Math.min(...cs.map(c=>c[1]))), j1=Math.ceil(Math.max(...cs.map(c=>c[1])));
+      for(let i=i0;i<=i1;i++)for(let j=j0;j<=j1;j++){const x=base[0]+i*A[0]+j*B[0], y=base[1]+i*A[1]+j*B[1];
+        if(x>=-m&&y>=-m&&x<=W+m&&y<=H+m) pts.push([x,y]);}
+    }
+    for(const q of pts){const fi=faceAt(faces,grid,q[0],q[1]); if(fi>=0){hits.add(fi); color.set(fi,pt.color);}}
+    per[k]=hits;
+  });
+  return {color,per,bg};
+}
+
+/* ---------- dibujo ---------- */
+const f=(v)=>Math.round(v*10)/10;
+function pointAt(st,L){
+  const cl=st.cl; let lo=0, hi=cl.length-1;
+  while(hi-lo>1){const mid=(lo+hi)>>1; if(cl[mid]<=L) lo=mid; else hi=mid;}
+  const seg=cl[hi]-cl[lo]||1, t=(L-cl[lo])/seg, a=st.pts[lo], b=st.pts[hi];
+  return {p:[a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t], i:lo};
+}
+function sub(st,a,b){
+  if(st.closed){
+    const T=st.total;
+    if(a<0) return [...sub(st,a+T,T), ...sub(st,0,b)];
+    if(b>T) return [...sub(st,a,T), ...sub(st,0,b-T)];
+  } else { a=Math.max(0,a); b=Math.min(st.total,b); }
+  if(b-a<0.5) return [];
+  const A=pointAt(st,a), B=pointAt(st,b), out=[A.p];
+  for(let k=A.i+1;k<=B.i;k++) out.push(st.pts[k]);
+  out.push(B.p); return [out];
+}
+const polyD=(pts,close)=>"M"+pts.map(p=>f(p[0])+" "+f(p[1])).join("L")+(close?"Z":"");
+
+let lastSVG="", raf=0, lastView=null;
+// render(): dibuja en pantalla. render({W,H}): genera el SVG de ese tamaño y lo devuelve, sin tocar la pantalla
+// (requestAnimationFrame pasa un número como argumento: solo un objeto cuenta como tamaño de hoja)
+function render(exp){
+  const ex=(exp&&typeof exp==="object")?exp:null;
+  if(!ex) raf=0;
+  const host=document.getElementById("host"), W=ex?ex.W:Math.max(50,host.clientWidth), H=ex?ex.H:Math.max(50,host.clientHeight);
+  const pal=curPal();
+  const tiles=buildTiles(W,H), segs=[], stars=[];
+  const rosN=rosetteN();
+  for(const t of tiles){
+    if(typeof t.n==="string") hankinGeneral(t,thetaFor(t.n)*Math.PI/180,state.delta,segs);
+    else hankin(t,thetaFor(t.n)*Math.PI/180,state.delta,segs,stars,t.n===rosN?{size:state.rosetteSize,shape:state.petalShape}:null);
+  }
+  if(!ex&&step.active&&step.k<5){ drawStep(host,W,H,pal,tiles,segs,stars); return; }
+  const {strands,passes,crosses,faces}=analyse(segs,W,H);
+  const fgrid=faceIndex(faces), paint=resolvePaint(W,H,faces,fgrid);
+  const auto=state.autoColor?autoColors(faces,W,H,state.scale,curAuto()):null;
+  const view={W,H,faces,grid:fgrid,per:paint.per,bg:paint.bg,auto:auto&&auto.color,classes:auto?auto.classes:0};
+  if(!ex) lastView=view;
+  const w=state.width, o=state.outline>0?Math.max(1,w*state.outline):0;
+  // esquinas de la cinta: en pico (con límite, para que las puntas muy agudas no se disparen), redondeadas o biseladas
+  const J=`stroke-linejoin="${state.join}"`+(state.join==="miter"?' stroke-miterlimit="6"':'');
+  let out=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  // capas: al exportar, cada parte del dibujo va en su propio grupo con nombre (capas de Inkscape);
+  // en pantalla no se agrupa nada. Las capas ocultas llevan los datos para el maquetador.
+  const layer=(id,label,hidden)=>{ if(!ex) return; out+=`<g id="${id}" inkscape:groupmode="layer" inkscape:label="${label}"`
+    +(ex.off?` transform="translate(${f(ex.off)},${f(ex.off)})" clip-path="url(#hoja)"`:"")+(hidden?` style="display:none"`:"")+">"; };
+  const endLayer=()=>{ if(ex) out+="</g>"; };
+  layer("fondo","Fondo");
+  out+=`<rect width="${W}" height="${H}" fill="${pal.bg}"/>`;
+  endLayer();
+  layer("estrellas","Estrellas rellenas",!state.fill);
+  if(state.fill){
+    // primero las estrellas de cada polígono, en un orden fijo por tipo; después las estrellas centrales
+    // de las rosetas, que quedan dentro de las anteriores y no deben quedar tapadas
+    const by=new Map();
+    const order=[...stars].filter(s=>s.pts.length>=3).sort((a,b)=>(a.n==="c")-(b.n==="c")||(a.n==="c"?0:trank(a.n)-trank(b.n)));
+    for(const s of order){ const col=fillFor(pal,s.n); const key=(s.n==="c"?"c":"s")+col;
+      if(!by.has(key)) by.set(key,{col,d:[]}); by.get(key).d.push(polyD(s.pts,true)); }
+    for(const {col,d} of by.values()) out+=`<path d="${d.join("")}" fill="${col}"/>`;
+  }
+  endLayer();
+  layer("pintura","Pintura");
+  if(paint.bg){
+    // fondo pintado: todo lo que queda fuera de los huecos cerrados, por encima del relleno de estrellas
+    out+=`<path fill-rule="evenodd" fill="${paint.bg}" d="M-2 -2H${W+2}V${H+2}H-2Z${faces.map(fc=>polyD(fc.pts,true)).join("")}"/>`;
+  }
+  const fillOf=new Map(auto?auto.color:[]);
+  for(const [fi,c] of paint.color) fillOf.set(fi,c);
+  if(fillOf.size){
+    const list=[...fillOf].filter(([,c])=>c).sort((a,b)=>faces[b[0]].area-faces[a[0]].area);
+    let cur=null, buf=[];
+    const flush=()=>{ if(buf.length) out+=`<path d="${buf.join("")}" fill="${cur}"/>`; buf=[]; };
+    for(const [fi,col] of list){ if(col!==cur){flush(); cur=col;} buf.push(polyD(faces[fi].pts,true)); }
+    flush();
+  }
+  endLayer();
+  if(ex){
+    // retícula siempre presente en el archivo (oculta si no se muestra), agrupada por tipo de polígono
+    layer("reticula","Retícula de construcción",!state.guide);
+    const byT=new Map(); for(const t of tiles){ const k=String(t.n); if(!byT.has(k)) byT.set(k,[]); byT.get(k).push(polyD(t.pts,true)); }
+    for(const [k,d] of byT) out+=`<path data-tipo="${xmlEsc(k)}" d="${d.join("")}" fill="none" stroke="${pal.guide}" stroke-width="1" stroke-dasharray="4 3"/>`;
+    endLayer();
+  } else if(state.guide){
+    out+=`<path d="${tiles.map(t=>polyD(t.pts,true)).join("")}" fill="none" stroke="${pal.guide}" stroke-width="1" stroke-dasharray="4 3"/>`;
+  }
+  const sd=strands.map(s=>polyD(s.pts,s.closed)).join("");
+  layer("cintas",state.style==="lace"?"Cintas entrelazadas":"Líneas");
+  if(state.style==="lace"){
+    if(o>0) out+=`<path d="${sd}" fill="none" stroke="${pal.outline}" stroke-width="${f(w+2*o)}" ${J}/>`;
+    out+=`<path d="${sd}" fill="none" stroke="${pal.band}" stroke-width="${f(w)}" ${J}/>`;
+    const pieces=[], piecesO=[], posIn=new Int32Array(passes.length);
+    for(const st of strands) st.passes.forEach((q,k)=>{posIn[q]=k;});
+    for(let pi=0;pi<passes.length;pi++){
+      const p=passes[pi]; if(p.over!==1) continue;
+      const st=strands[p.st], cr=crosses[p.c];
+      // largo que necesita el tramo de arriba para tapar la otra cinta. No basta medir por el centro:
+      // cada borde recorre la zona de solape (w/2+o)·(1+|cos|)/sen, más que el centro cuando el cruce es inclinado
+      const sA=Math.max(cr.sin,0.3), cA=Math.sqrt(Math.max(0,1-sA*sA)), need=(w/2+o)*(1+cA)/sA;
+      let hl=need+o*1.5+0.5;
+      const P=st.passes, k=posIn[pi];
+      const gap=(q)=>{let d=Math.abs(passes[q].L-p.L); if(st.closed) d=Math.min(d,st.total-d); return d;};
+      if(P.length>1){
+        const prev=k>0?P[k-1]:(st.closed?P[P.length-1]:-1), next=k<P.length-1?P[k+1]:(st.closed?P[0]:-1);
+        for(const q of [prev,next]) if(q>=0&&q!==pi) hl=Math.min(hl,0.48*gap(q));
+      }
+      // el borde oscuro del tramo superior termina un poco antes que el relleno claro,
+      // así su extremo queda tapado y no asoma una raya fina al suavizar los bordes
+      // nunca se recorta por debajo de lo necesario para tapar la cinta que pasa por debajo
+      const trim=Math.max(0, Math.min(0.8*o+0.5, 0.2*hl, hl-need));
+      for(const pts of sub(st,p.L-hl,p.L+hl)) pieces.push(polyD(pts,false));
+      for(const pts of sub(st,p.L-hl+trim,p.L+hl-trim)) piecesO.push(polyD(pts,false));
+    }
+    const pd=pieces.join(""), pdO=piecesO.join("");
+    if(o>0) out+=`<path d="${pdO}" fill="none" stroke="${pal.outline}" stroke-width="${f(w+2*o)}" ${J}/>`;
+    out+=`<path d="${pd}" fill="none" stroke="${pal.band}" stroke-width="${f(w)}" ${J}/>`;
+  } else {
+    out+=`<path d="${sd}" fill="none" stroke="${pal.line}" stroke-width="${f(w*0.45+0.6)}" stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+  endLayer();
+  if(ex){
+    // datos para el maquetador (capas ocultas): cada pieza cerrada con su clase de forma, el trazado central
+    // de las cintas y la celda que se repite
+    const cls=autoColors(faces,W,H,state.scale,curAuto()).classOf;
+    layer("piezas","Piezas (datos)",true);
+    faces.forEach((fc,i)=>{ out+=`<path data-clase="${cls[i]}" data-lados="${fc.pts.length}" d="${polyD(fc.pts,true)}" fill="none" stroke="#000" stroke-width="0.5"/>`; });
+    endLayer();
+    layer("trazado","Trazado central (datos)",true);
+    for(const s of strands) out+=`<path data-cerrada="${s.closed?1:0}" d="${polyD(s.pts,s.closed)}" fill="none" stroke="#000" stroke-width="0.5"/>`;
+    endLayer();
+    const {toS}=viewXform(W,H), t=TILINGS[state.tiling], [a,b]=t.T1, [d,e]=t.T2;
+    const P=[[0,0],[a,b],[a+d,b+e],[d,e]].map(([x,y])=>toS(x,y));
+    layer("celda","Celda que se repite (datos)",true);
+    out+=`<path data-t1="${f(P[1][0]-P[0][0])},${f(P[1][1]-P[0][1])}" data-t2="${f(P[3][0]-P[0][0])},${f(P[3][1]-P[0][1])}" d="M${P.map(p=>f(p[0])+" "+f(p[1])).join("L")}Z" fill="none" stroke="#c00" stroke-width="1"/>`;
+    endLayer();
+  }
+  out+="</svg>";
+  if(ex) return out;
+  host.innerHTML=out; lastSVG=out;
+  const sym=TILINGS[state.tiling].name.split("· ")[1];
+  document.getElementById("hud").textContent=`${sym} · ${state.perPoly?"θ "+polyTypes(state.tiling).map(n=>`${n}:${thetaFor(n)}°`).join(" "):`θ ${state.theta}°`} · ${strands.length} ${strands.length===1?"cinta":"cintas"} · ${crosses.length} cruces${state.autoColor?` · ${lastView.classes} formas`:""}`;
+}
+// historial para deshacer y rehacer (se rellena más abajo; aquí solo se avisa de cada cambio)
+const H={list:[],i:-1,timer:0,ready:false};
+const schedule=()=>{ if(!raf) raf=requestAnimationFrame(render); noteChange(); };
+
+/* ---------- controles ---------- */
+const $=(id)=>document.getElementById(id);
+const tilingSel=$("tiling");
+{ const groups=[["Retículas clásicas",k=>!k.startsWith("G-")&&!k.startsWith("P-")],["Girih",k=>k.startsWith("G-")],["Retículas propias",k=>k.startsWith("P-")]];
+  for(const [label,test] of groups){ const g=document.createElement("optgroup"); g.label=label;
+    for(const k in TILINGS) if(test(k)){const o=document.createElement("option"); o.value=k; o.textContent=TILINGS[k].name.replace(/^(Girih|Propia) · /,""); g.appendChild(o);}
+    tilingSel.appendChild(g); } }
+const presetsEl=$("presets");
+PRESETS.forEach((p,i)=>{const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=p.name; b.dataset.i=i;
+  b.onclick=()=>{stopAnim(); Object.assign(state,{width:6,join:"miter",outline:0.22,perPoly:false,autoColor:false,rosette:false,rosetteSize:0.6,petalShape:0.6},p.s,{thetaN:{...(p.s.thetaN||{})},paintBy:{},custom:{},rot:0,panX:0,panY:0}); sync(i); buildColors(); syncPaint(); schedule();}; presetsEl.appendChild(b);});
+const palEl=$("palettes");
+for(const k in PALETTES){const p=PALETTES[k], b=document.createElement("button"); b.type="button"; b.className="sw"; b.dataset.v=k; b.title=p.name; b.setAttribute("aria-label",p.name);
+  for(const c of [p.bg,p.fill[8],p.fill[3],p.outline]){const s=document.createElement("span"); s.style.background=c; b.appendChild(s);}
+  b.onclick=()=>{state.palette=k; state.custom={}; sync(); buildColors(); syncPaint(); schedule();}; palEl.appendChild(b);}
+
+let polyKey="";
+function buildPolySliders(){
+  const box=$("polyAngles"), types=polyTypes(state.tiling), key=types.join(",");
+  box.hidden=!state.perPoly;
+  if(key!==polyKey){
+    polyKey=key; box.innerHTML="";
+    for(const n of types){
+      const d=document.createElement("div"); d.className="slider";
+      d.innerHTML=`<label for="thetaN${n}">${polyName(n)}</label><output id="thetaN${n}V"></output><input type="range" id="thetaN${n}" min="10" max="85" step="0.5">`;
+      box.appendChild(d);
+      d.querySelector("input").addEventListener("input",(e)=>{const val=parseFloat(e.target.value); stopAnim(); state.thetaN[n]=val; clearPreset(); updatePolyValues(); schedule();});
+    }
+    if(types.length===1){const h=document.createElement("p"); h.className="hint"; h.textContent="Esta retícula solo tiene un tipo de polígono."; box.appendChild(h);}
+  }
+  updatePolyValues();
+}
+function updatePolyValues(){
+  for(const n of polyTypes(state.tiling)){
+    if(state.thetaN[n]==null) state.thetaN[n]=state.theta;
+    const i=$("thetaN"+n); if(!i) continue;
+    i.value=state.thetaN[n]; $("thetaN"+n+"V").textContent=state.thetaN[n].toFixed(1)+"°";
+  }
+  $("thetaV").textContent=state.perPoly?"mueve todos":state.theta.toFixed(1)+"°";
+  // aviso de 54° en las girih: se actualiza con cualquier control de ángulo
+  const rec=recTheta(), allRec=rec!=null&&(state.perPoly?polyTypes(state.tiling).every(n=>thetaFor(n)===rec):state.theta===rec);
+  $("girihHint").hidden=rec==null||allRec;
+  if(rec!=null){ $("recText").textContent=state.tiling.startsWith("G-")?"Las girih tradicionales usan θ = 54°.":`Ángulo recomendado para esta retícula: ${rec}°.`; $("girih54").textContent=`Usar ${rec}°`; }
+  $("provLine").textContent=provenance().short;
+}
+function sync(presetIdx){
+  tilingSel.value=state.tiling;
+  for(const id of ["theta","delta","scale","rot","width"]) $(id).value=state[id];
+  $("thetaV").textContent=state.theta.toFixed(1)+"°";
+  $("deltaV").textContent=state.delta.toFixed(2);
+  $("scaleV").textContent=state.scale+" px";
+  $("rotV").textContent=state.rot+"°";
+  $("widthV").textContent=state.width.toFixed(1);
+  document.querySelectorAll("#join button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.join)));
+  $("outline").value=state.outline; $("outlineV").textContent=outlineLabel();
+  $("laceOpts").hidden=state.style!=="lace";
+  $("fill").checked=state.fill; $("guide").checked=state.guide; $("perPoly").checked=state.perPoly;
+  buildPolySliders(); if(step.active) syncStep();
+  $("rosette").checked=state.rosette; $("rosBox").hidden=!state.rosette;
+  $("petalShape").value=state.petalShape; $("petalShapeV").textContent=petalLabel();
+  $("rosetteSize").value=state.rosetteSize; $("rosetteSizeV").textContent=Math.round(state.rosetteSize*100)+" %";
+  const big=polyTypes(state.tiling)[0];
+  $("rosHint").textContent= big>=6 ? `Se aplica a los ${polyName(big).toLowerCase()}.` : "Las rosetas necesitan polígonos regulares de 6 lados o más; esta retícula no los tiene.";
+  document.querySelectorAll("#style button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===state.style));
+  document.querySelectorAll("#palettes .sw").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===state.palette));
+  $("palName").textContent=PALETTES[state.palette].name+(Object.keys(state.custom).length?" · con tus colores":"");
+  buildCustom();
+  document.querySelectorAll("#presets .chip").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.i===presetIdx)));
+}
+const clearPreset=()=>document.querySelectorAll("#presets .chip").forEach(b=>b.setAttribute("aria-pressed","false"));
+tilingSel.onchange=()=>{state.tiling=tilingSel.value; clearPreset(); sync(); syncPaint(); schedule();};
+for(const id of ["theta","delta","scale","rot","width"]){
+  $(id).addEventListener("input",()=>{
+    // el valor elegido se lee antes de parar la animación (al parar se redibuja el panel)
+    const val=parseFloat($(id).value);
+    if(id==="theta"&&anim){ stopAnim(); $(id).value=val; }
+    if(id==="theta"&&state.perPoly){const dv=val-state.theta;
+      for(const n of polyTypes(state.tiling)) state.thetaN[n]=clampT(thetaFor(n)+dv);}
+    state[id]=val; const keep=document.querySelector('#presets .chip[aria-pressed="true"]');
+    sync(keep&&(id==="scale"||id==="rot"||id==="width")?+keep.dataset.i:undefined); schedule();});
+}
+$("perPoly").onchange=()=>{stopAnim(); state.perPoly=$("perPoly").checked;
+  if(state.perPoly) for(const n of polyTypes(state.tiling)) state.thetaN[n]=state.theta;
+  clearPreset(); sync(); schedule();};
+$("girih54").onclick=()=>{stopAnim(); const r=recTheta(); state.theta=r; for(const n of polyTypes(state.tiling)) state.thetaN[n]=r; clearPreset(); sync(); schedule();};
+$("provCopy").onclick=()=>copyText(provenance().full(),"Ficha copiada al portapapeles",$("provOut"));
+$("rosette").onchange=()=>{state.rosette=$("rosette").checked; clearPreset(); sync(); schedule();};
+$("rosetteSize").addEventListener("input",()=>{state.rosetteSize=parseFloat($("rosetteSize").value); $("rosetteSizeV").textContent=Math.round(state.rosetteSize*100)+" %"; clearPreset(); schedule();});
+$("petalShape").addEventListener("input",()=>{state.petalShape=parseFloat($("petalShape").value); $("petalShapeV").textContent=petalLabel(); clearPreset(); schedule();});
+$("fill").onchange=()=>{state.fill=$("fill").checked; schedule();};
+$("guide").onchange=()=>{state.guide=$("guide").checked; schedule();};
+document.querySelectorAll("#style button").forEach(b=>b.onclick=()=>{state.style=b.dataset.v; sync(); schedule();});
+const outlineLabel=()=>state.outline<=0?"sin borde":Math.round(state.outline*100)+" % de la cinta";
+document.querySelectorAll("#join button").forEach(b=>b.onclick=()=>{state.join=b.dataset.v; clearPreset(); sync(); schedule();});
+$("outline").addEventListener("input",()=>{state.outline=parseFloat($("outline").value); $("outlineV").textContent=outlineLabel(); clearPreset(); schedule();});
+
+$("random").onclick=()=>{
+  stopAnim();
+  const keys=Object.keys(TILINGS), pk=Object.keys(PALETTES), r=(a,b)=>a+Math.random()*(b-a);
+  state.tiling=keys[Math.floor(Math.random()*keys.length)];
+  state.theta=Math.round(r(30,80)*2)/2;
+  if(recTheta()!=null&&Math.random()<0.6) state.theta=recTheta();
+  state.perPoly=Math.random()<0.4; state.thetaN={};
+  if(state.perPoly) for(const n of polyTypes(state.tiling)) state.thetaN[n]=clampT(r(30,82));
+  state.delta=Math.random()<0.7?0:Math.round(r(0.05,0.3)*100)/100;
+  state.palette=pk[Math.floor(Math.random()*pk.length)];
+  state.style=Math.random()<0.8?"lace":"lines";
+  state.fill=Math.random()<0.75;
+  state.rot=0; state.panX=0; state.panY=0; state.paintBy={}; state.custom={};
+  state.join=Math.random()<0.6?"miter":(Math.random()<0.5?"round":"bevel"); state.outline=Math.round(r(0.12,0.35)*100)/100;
+  state.autoColor=Math.random()<0.5; state.autoSeed=Math.floor(Math.random()*1000);
+  state.rosette=Math.random()<0.3; state.rosetteSize=Math.round(r(0.4,0.8)*100)/100; state.petalShape=Math.round(r(0,1)*100)/100;
+  clearPreset(); sync(); buildColors(); syncPaint(); schedule();
+};
+const toast=(msg)=>{const t=$("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove("on"),1800);};
+$("copy").onclick=()=>{
+  const ta=$("svgOut");
+  const fallback=()=>{ta.hidden=false; ta.value=lastSVG; ta.focus(); ta.select(); toast("Selecciona y copia el código");};
+  try{ navigator.clipboard.writeText(lastSVG).then(()=>{ta.hidden=true; toast("SVG copiado al portapapeles");}, fallback); }
+  catch(e){ fallback(); }
+};
+
+/* ---------- procedencia de cada retícula (para citar fuentes) ---------- */
+function recTheta(){ const k=state.tiling; return k.startsWith("G-")?54:(TILINGS[k].rec??null); }
+const SOURCES={
+  hankin:"E. H. Hankin (1925), The Drawing of Geometric Patterns in Saracenic Art, Memoirs of the Archaeological Survey of India, 15.",
+  kaplan:"C. S. Kaplan (2005), Islamic Star Patterns from Polygons in Contact, Graphics Interface 2005.",
+  lee:"A. J. Lee (1987), Islamic Star Patterns, Muqarnas, 4.",
+  lu:"P. J. Lu y P. J. Steinhardt (2007), Decagonal and Quasi-Crystalline Tilings in Medieval Islamic Architecture, Science, 315.",
+};
+function provenance(){
+  const k=state.tiling, T=TILINGS[k], fmt=(v)=>`(${v[0].toFixed(4)}, ${v[1].toFixed(4)})`;
+  let short, kind, src=["hankin","kaplan"];
+  if(k.startsWith("P-")){ short=`Retícula propia del buscador del Taller: ${T.origin.config}. Método de Hankin (1925) y Kaplan (2005).`;
+    kind=`Retícula propia, encontrada por el buscador del Taller de Lacería (polígonos regulares en contacto en una red periódica; los huecos son las piezas de relleno): ${T.origin.config}.`; }
+  else if(k.startsWith("G-")){ short="Composición girih encontrada por el buscador del Taller con las piezas de Lu y Steinhardt (2007).";
+    kind="Composición periódica de piezas girih, encontrada por el buscador del Taller de Lacería a partir de las cinco piezas descritas por Lu y Steinhardt (2007)."; src.push("lu"); }
+  else { short="Retícula clásica de polígonos regulares (dominio público)."; kind="Retícula clásica de polígonos regulares (teselación regular o arquimediana), de dominio público."; }
+  const full=()=>{
+    const lines=["Taller de Lacería · ficha del diseño",
+      `Retícula: ${T.name}`, `Procedencia: ${kind}`, `Red de repetición: T1 = ${fmt(T.T1)}, T2 = ${fmt(T.T2)}`,
+      `Ángulo de contacto: `+(state.perPoly?polyTypes(k).map(n=>`${polyName(n).toLowerCase()} ${thetaFor(n)}°`).join(", "):`θ = ${state.theta}°`)+(state.delta>0?`; separación δ = ${state.delta}`:""),
+      "Decoración: método de polígonos en contacto (líneas desde el punto medio de cada lado con el ángulo θ)."+(T.polys.some(q=>!Array.isArray(q))?" En las piezas irregulares, cada línea se une con la primera que encuentra de frente.":"")+(state.rosette&&rosetteN()?" Rosetas: construcción propia del Taller.":""),
+      "Fuentes del método:", ...src.map(x=>"  · "+SOURCES[x]),
+      "Datos de terceros: ninguno.",
+      "Herramienta: diseño creado con el Taller de Lacería, desarrollado con ayuda de una IA (Claude, de Anthropic).",
+      `Código del diseño: ${encodeDesign(designOf())}`,
+      `Fecha: ${new Date().toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"})}`];
+    return lines.join("\n");
+  };
+  return {short, full};
+}
+
+/* ---------- código de diseño y favoritos ---------- */
+const CODE_PREFIX="LAC1.";
+const r4=(v)=>Math.round(v*1e4)/1e4;
+function designOf(){
+  const t=state.tiling, an={};
+  for(const n of polyTypes(t)) if(state.thetaN[n]!=null) an[n]=state.thetaN[n];
+  return {t, a:state.theta, pp:state.perPoly?1:0, an, d:state.delta, sc:state.scale, r:state.rot, px:Math.round(state.panX), py:Math.round(state.panY),
+    s:state.style==="lines"?1:0, w:state.width, f:state.fill?1:0, g:state.guide?1:0, pl:state.palette, c:{...state.custom},
+    ro:state.rosette?1:0, rs:state.rosetteSize, ps:state.petalShape, ac:state.autoColor?1:0, as:state.autoSeed, j:state.join, o:state.outline,
+    pb:(state.paintBy[t]||[]).map(q=>q.bg?["b",q.color]:[r4(q.x),r4(q.y),q.color,q.rep?1:0])};
+}
+function encodeDesign(d){
+  const bytes=new TextEncoder().encode(JSON.stringify(d)); let bin=""; bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return CODE_PREFIX+btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+// decodifica y valida: cualquier valor fuera de rango se acota y cualquier cosa desconocida se rechaza
+function decodeDesign(code){
+  code=String(code||"").trim();
+  if(!code.startsWith(CODE_PREFIX)) throw new Error("El código debe empezar por LAC1.");
+  const body=code.slice(CODE_PREFIX.length);
+  if(!body||body.length>40000||!/^[A-Za-z0-9_-]+$/.test(body)) throw new Error("El código está incompleto o tiene caracteres que no son suyos.");
+  let d;
+  try{ const bin=atob(body.replace(/-/g,"+").replace(/_/g,"/")); d=JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0)))); }
+  catch(e){ throw new Error("No se puede leer el código: puede que esté cortado."); }
+  if(!d||typeof d!=="object") throw new Error("No se puede leer el código.");
+  if(!TILINGS[d.t]) throw new Error("El código usa una retícula que esta versión no tiene.");
+  const num=(v,lo,hi,def)=>{v=Number(v); return Number.isFinite(v)?Math.max(lo,Math.min(hi,v)):def;};
+  const hex=(v)=>typeof v==="string"&&/^#[0-9a-f]{6}$/i.test(v)?v.toLowerCase():null;
+  const types=polyTypes(d.t), thetaN={};
+  if(d.an&&typeof d.an==="object") for(const n of types){ const v=d.an[n]; if(v!=null) thetaN[n]=num(v,10,85,54); }
+  const custom={};
+  if(d.c&&typeof d.c==="object") for(const [k,v] of Object.entries(d.c)){
+    const ok=["bg","band","outline","line"].includes(k)||(k.startsWith("f:")&&(k==="f:c"||types.map(String).includes(k.slice(2))));
+    const h=hex(v); if(ok&&h) custom[k]=h; }
+  const pb=[];
+  if(Array.isArray(d.pb)) for(const q of d.pb.slice(0,1000)){
+    if(!Array.isArray(q)) continue;
+    if(q[0]==="b"){ const h=hex(q[1]); if(h) pb.push({bg:true,color:h}); continue; }
+    const x=Number(q[0]), y=Number(q[1]); if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>1e4||Math.abs(y)>1e4) continue;
+    const col=q[2]===null?null:hex(q[2]); if(q[2]!==null&&!col) continue;
+    pb.push({x,y,color:col,rep:!!q[3]});
+  }
+  return {tiling:d.t, theta:num(d.a,10,85,67.5), perPoly:!!d.pp, thetaN, delta:num(d.d,0,0.45,0), scale:num(d.sc,24,160,56), rot:num(d.r,0,90,0),
+    panX:num(d.px,-1e4,1e4,0), panY:num(d.py,-1e4,1e4,0), style:d.s?"lines":"lace", width:num(d.w,1,16,6), fill:!!d.f, guide:!!d.g,
+    palette:PALETTES[d.pl]?d.pl:"fez", custom, rosette:!!d.ro, rosetteSize:num(d.rs,0.4,0.85,0.6), petalShape:num(d.ps,0,1,0.6),
+    autoColor:!!d.ac, autoSeed:Math.round(num(d.as,0,1e9,0)), join:["miter","round","bevel"].includes(d.j)?d.j:"miter", outline:num(d.o,0,0.5,0.22),
+    paintBy:{[d.t]:pb}};
+}
+function applyDesign(st){
+  stopAnim(); Object.assign(state,st); clearPreset();
+  sync(); buildColors(); syncPaint(); schedule();
+}
+function copyText(text,okMsg,ta){
+  const fallback=()=>{ta.hidden=false; ta.value=text; ta.focus(); ta.select(); toast("Selecciona y copia el código");};
+  try{ navigator.clipboard.writeText(text).then(()=>{ta.hidden=true; toast(okMsg);},fallback); }catch(e){ fallback(); }
+}
+$("codeCopy").onclick=()=>copyText(encodeDesign(designOf()),"Código copiado al portapapeles",$("codeOut"));
+function loadCode(){
+  try{ applyDesign(decodeDesign($("codeIn").value)); $("codeIn").value=""; toast("Diseño cargado"); }
+  catch(e){ toast(e.message); $("codeIn").setAttribute("aria-invalid","true"); }
+}
+$("codeLoad").onclick=loadCode;
+$("codeIn").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); loadCode(); } });
+$("codeIn").addEventListener("input",()=>$("codeIn").removeAttribute("aria-invalid"));
+
+// favoritos: se guardan en el navegador de quien usa la página (solo los ve esa persona, en ese navegador)
+const FAV_KEY="laceria.favoritos.v1";
+let favStorage=true;
+function readFavs(){ try{ const v=JSON.parse(localStorage.getItem(FAV_KEY)||"[]"); favStorage=true; return Array.isArray(v)?v.filter(x=>x&&typeof x.code==="string"):[]; }catch(e){ favStorage=false; return []; } }
+function writeFavs(list){ try{ localStorage.setItem(FAV_KEY,JSON.stringify(list)); favStorage=true; return true; }catch(e){ favStorage=false; return false; } }
+async function thumbOf(svg){
+  try{ const img=new Image(); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg); await img.decode();
+    const c=document.createElement("canvas"), S=96, side=Math.min(img.width,img.height); c.width=S; c.height=S;
+    c.getContext("2d").drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,S,S); return c.toDataURL("image/jpeg",0.82); }
+  catch(e){ return ""; }
+}
+function renderFavs(){
+  const list=readFavs(), ul=$("favList"); ul.innerHTML="";
+  $("favMsg").textContent=!favStorage?"Este navegador no deja guardar diseños aquí (por ejemplo, en una ventana privada). Usa el código de diseño."
+    :list.length?"":"Todavía no has guardado ningún diseño.";
+  for(const fav of list){
+    const li=document.createElement("li");
+    const load=document.createElement("button"); load.type="button"; load.className="favload"; load.title="Cargar este diseño";
+    const img=document.createElement("img"); img.alt=""; if(fav.thumb) img.src=fav.thumb;
+    const tx=document.createElement("span"); tx.className="favtext";
+    const b=document.createElement("b"); b.textContent=fav.name;
+    const sm=document.createElement("small"); sm.textContent=new Date(fav.at).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    tx.append(b,sm); load.append(img,tx);
+    load.onclick=()=>{ try{ applyDesign(decodeDesign(fav.code)); toast("«"+fav.name+"» cargado"); }catch(e){ toast(e.message); } };
+    const btns=document.createElement("span"); btns.className="favbtns";
+    const cp=document.createElement("button"); cp.type="button"; cp.className="linkbtn"; cp.textContent="Copiar código";
+    cp.onclick=()=>copyText(fav.code,"Código copiado al portapapeles",$("codeOut"));
+    const del=document.createElement("button"); del.type="button"; del.className="linkbtn"; del.textContent="Borrar";
+    del.onclick=()=>{
+      if(del.dataset.confirm!=="1"){ del.dataset.confirm="1"; del.textContent="¿Seguro?"; setTimeout(()=>{ if(del.isConnected){ del.dataset.confirm=""; del.textContent="Borrar"; } },3000); return; }
+      writeFavs(readFavs().filter(x=>x.id!==fav.id)); renderFavs(); toast("Diseño borrado");
+    };
+    btns.append(cp,del); li.append(load,btns); ul.appendChild(li);
+  }
+}
+$("favSave").onclick=async()=>{
+  const list=readFavs(); if(!favStorage){ renderFavs(); toast("No se puede guardar en este navegador"); return; }
+  const name=($("favName").value.trim()||("Diseño "+(list.length+1)+" · "+state.tiling)).slice(0,60);
+  const fav={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7), name, code:encodeDesign(designOf()), at:Date.now(), thumb:await thumbOf(lastSVG)};
+  if(!writeFavs([fav,...list])){ renderFavs(); toast("No se ha podido guardar: el navegador no tiene sitio o no lo permite"); return; }
+  $("favName").value=""; renderFavs(); toast("Guardado como «"+name+"»");
+};
+$("favName").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); $("favSave").click(); } });
+
+/* ---------- descargar en A4 / A3 ---------- */
+const PX_PER_MM=96/25.4, PAPER={A4:[210,297],A3:[297,420]};
+const xmlEsc=(t)=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function paperDims(){ let [w,h]=PAPER[state.expSize]; if(state.expOrient==="l") [w,h]=[h,w]; return [w,h]; }
+// SVG en milímetros reales: el dibujo se genera para la hoja (no es una captura de la pantalla) y lleva su ficha dentro
+function exportSVG(){
+  const [wmm,hmm]=paperDims(), m=state.expMargin?10:0, k=PX_PER_MM;
+  const W=wmm*k, H=hmm*k, Wi=(wmm-2*m)*k, Hi=(hmm-2*m)*k;
+  // las capas van directamente en la raíz (así Inkscape las reconoce como capas); el margen es un desplazamiento
+  const inner=render({W:Wi,H:Hi,off:m*k});
+  const body=inner.replace(/^<svg [^>]*>/,"").replace(/<\/svg>$/,"");
+  const orient=state.expOrient==="l"?"horizontal":"vertical";
+  const ficha=provenance().full()+`\nFormato: ${state.expSize} ${orient} (${wmm} × ${hmm} mm)${m?", margen de 10 mm":", sin margen"}.`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="${wmm}mm" height="${hmm}mm" viewBox="0 0 ${f(W)} ${f(H)}">`
+    +`<title>${xmlEsc(TILINGS[state.tiling].name)} · Taller de Lacería</title><desc>${xmlEsc(ficha)}</desc>`
+    +`<metadata><codigo-diseno>${xmlEsc(encodeDesign(designOf()))}</codigo-diseno><mm-por-unidad>${f(1/k)}</mm-por-unidad></metadata>`
+    +`<defs><clipPath id="hoja"><rect width="${f(Wi)}" height="${f(Hi)}"/></clipPath></defs>`
+    +(m?`<rect width="${f(W)}" height="${f(H)}" fill="#ffffff"/>`:"")
+    +body+`</svg>`;
+}
+function exportName(){
+  const base=TILINGS[state.tiling].name.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-+|-+$/g,"").toLowerCase();
+  return `laceria-${base}-${state.expSize}-${state.expOrient==="l"?"horizontal":"vertical"}.svg`;
+}
+let downloadsNS=null;
+function syncExport(){
+  document.querySelectorAll("#expSize button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.expSize)));
+  document.querySelectorAll("#expOrient button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.expOrient)));
+  $("expMargin").checked=state.expMargin;
+}
+$("exportToggle").onclick=()=>{const open=$("exportBox").hidden; $("exportBox").hidden=!open; $("exportToggle").setAttribute("aria-expanded",String(open));};
+document.querySelectorAll("#expSize button").forEach(b=>b.onclick=()=>{state.expSize=b.dataset.v; syncExport();});
+document.querySelectorAll("#expOrient button").forEach(b=>b.onclick=()=>{state.expOrient=b.dataset.v; syncExport();});
+$("expMargin").onchange=()=>{state.expMargin=$("expMargin").checked;};
+$("expSave").onclick=async()=>{
+  if(!downloadsNS){ toast("Este visor no permite descargar archivos: usa «Copiar SVG»"); return; }
+  const btn=$("expSave"); btn.disabled=true;
+  try{
+    const data=new Blob([exportSVG()],{type:"image/svg+xml"});
+    await downloadsNS.save({filename:exportName(), data});
+    toast(`${state.expSize} descargado`);
+  }catch(e){
+    const code=e&&e.code;
+    if(code==="declined") toast("Descarga cancelada");
+    else if(code==="rate_limited") toast("Ya hay una descarga esperando tu confirmación");
+    else if(code==="too_large") toast("El archivo es demasiado grande; prueba en A4");
+    else toast("No se ha podido descargar aquí: usa «Copiar SVG»");
+  }finally{ btn.disabled=false; }
+};
+// la descarga solo está disponible si el visor lo permite; si no, queda «Copiar SVG»
+(async()=>{ try{ downloadsNS=(window.claude&&window.claude.use)?await window.claude.use("downloads"):null; }catch(e){ downloadsNS=null; }
+  if(!downloadsNS){ $("expSave").hidden=true; $("expInfo").textContent="Este visor no permite descargar archivos. «Copiar SVG» copia el dibujo de la pantalla."; } })();
+
+/* ---------- deshacer y rehacer ---------- */
+// Cada paso guarda el diseño completo (no el encuadre: desplazar el dibujo no llena el historial).
+// Los cambios seguidos (un arrastre de deslizador) se agrupan en un paso; un clic, un toque o una tecla
+// cierran el paso anterior, así que cada pincelada o cada botón cuenta por separado.
+const HIST_MAX=100;
+const HIST_KEYS=["tiling","theta","perPoly","thetaN","delta","scale","rot","style","width","fill","guide","palette","custom","rosette","rosetteSize","petalShape","autoColor","autoSeed","join","outline","paintBy"];
+function snap(){ const o={}; for(const k of HIST_KEYS) o[k]=state[k]; return JSON.stringify(o); }
+function noteChange(){ if(!H.ready||anim) return; clearTimeout(H.timer); H.timer=setTimeout(commitHist,400); }
+function commitHist(){
+  clearTimeout(H.timer); H.timer=0; if(!H.ready||anim) return;
+  const sn=snap(); if(H.list[H.i]===sn) return;
+  H.list=H.list.slice(0,H.i+1); H.list.push(sn);
+  if(H.list.length>HIST_MAX) H.list.shift();
+  H.i=H.list.length-1; syncHist();
+}
+function flushHist(){ if(H.timer) commitHist(); }
+function applySnap(sn){
+  H.ready=false;
+  Object.assign(state,JSON.parse(sn)); clearPreset();
+  sync(); buildColors(); syncPaint();
+  if(!raf) raf=requestAnimationFrame(render);
+  H.ready=true;
+}
+function undo(){ if(anim) stopAnim(); flushHist(); if(H.i<=0) return; H.i--; applySnap(H.list[H.i]); syncHist(); toast("Deshecho"); }
+function redo(){ if(anim) stopAnim(); flushHist(); if(H.i>=H.list.length-1) return; H.i++; applySnap(H.list[H.i]); syncHist(); toast("Rehecho"); }
+function syncHist(){ $("undoBtn").disabled=H.i<=0; $("redoBtn").disabled=H.i>=H.list.length-1; }
+$("undoBtn").onclick=undo; $("redoBtn").onclick=redo;
+document.addEventListener("pointerdown",flushHist,true);
+document.addEventListener("keydown",e=>{
+  const tg=e.target, txt=tg&&(tg.tagName==="TEXTAREA"||(tg.tagName==="INPUT"&&tg.type==="text"));
+  if((e.ctrlKey||e.metaKey)&&!e.altKey&&!txt){
+    const k=e.key.toLowerCase();
+    if(k==="z"){ e.preventDefault(); e.shiftKey?redo():undo(); return; }
+    if(k==="y"){ e.preventDefault(); redo(); return; }
+  }
+  flushHist();
+},true);
+
+/* ---------- construcción paso a paso ---------- */
+const step={active:false,k:1};
+const STEP_ACC="#e4572e";
+function drawStep(host,W,H,pal,tiles,segs,stars){
+  // cada tipo de polígono con una intensidad distinta, para distinguirlos aunque la paleta les dé el mismo color
+  const types=polyTypes(state.tiling), tone=[1,0.45,1.6,0.75,1.25];
+  const k=step.k, tilesD=(op,sw,so)=>tiles.map(t=>`<path d="${polyD(t.pts,true)}" fill="${fillFor(pal,t.n)}" fill-opacity="${Math.min(0.9,op*(tone[types.indexOf(t.n)]||1)).toFixed(2)}" stroke="${pal.outline}" stroke-opacity="${so}" stroke-width="${sw}" stroke-linejoin="round"/>`).join("");
+  // puntos de arranque de los rayos: el punto medio de cada lado (o los dos puntos separados δ)
+  const starts=[];
+  for(const t of tiles){const P=t.pts, n=P.length; for(let i=0;i<n;i++){const a=P[i], b=P[(i+1)%n], L=Math.hypot(b[0]-a[0],b[1]-a[1]), ux=(b[0]-a[0])/L, uy=(b[1]-a[1])/L, mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, d=state.delta*L;
+    if(d===0) starts.push([mx,my,L]); else starts.push([mx+d*ux,my+d*uy,L],[mx-d*ux,my-d*uy,L]);}}
+  const SK=(p)=>Math.round(p[0]*20)+","+Math.round(p[1]*20), isStart=new Map(starts.map(q=>[SK(q),q[2]]));
+  const rays=[], meet=new Map();
+  for(const [a,b] of segs){
+    for(const [p,q] of [[a,b],[b,a]]){ const L=isStart.get(SK(p)); if(L===undefined) continue;
+      const dx=q[0]-p[0], dy=q[1]-p[1], len=Math.hypot(dx,dy)||1, r=Math.min(len,0.42*L); rays.push([p,[p[0]+dx/len*r,p[1]+dy/len*r]]); }
+    for(const p of [a,b]) if(!isStart.has(SK(p))) meet.set(SK(p),p);
+  }
+  const vis=(p)=>p[0]>-20&&p[0]<W+20&&p[1]>-20&&p[1]<H+20;
+  const dots=(pts,r,fill,stroke)=>pts.filter(vis).map(p=>`<circle cx="${f(p[0])}" cy="${f(p[1])}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`).join("");
+  const lines=(L,col,sw)=>`<path d="${L.map(([a,b])=>`M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}`).join("")}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  let out=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="${pal.bg}"/>`;
+  if(k===1) out+=tilesD(0.35,1.6,1);
+  if(k===2) out+=tilesD(0.16,1.2,0.55)+lines(rays,STEP_ACC,2.4)+dots(starts,3.2,STEP_ACC,pal.bg);
+  if(k===3) out+=tilesD(0.1,1,0.3)+lines(segs,STEP_ACC,1.9)+dots([...meet.values()],3.2,pal.bg,STEP_ACC)+dots(starts,2.4,STEP_ACC,pal.bg);
+  if(k===4){
+    if(state.fill){ const order=[...stars].filter(s=>s.pts.length>=3).sort((a,b)=>(a.n==="c")-(b.n==="c")||(a.n==="c"?0:trank(a.n)-trank(b.n)));
+      out+=order.map(s2=>`<path d="${polyD(s2.pts,true)}" fill="${fillFor(pal,s2.n)}"/>`).join(""); }
+    out+=lines(segs,pal.line,f(state.width*0.45+0.6));
+  }
+  out+="</svg>";
+  host.innerHTML=out; lastSVG=out;
+  window.__stepData={k, tiles:tiles.length, starts:starts.length, rays:rays.length, meet:meet.size, segs:segs.length};
+  const sym=TILINGS[state.tiling].name.split("· ")[1];
+  document.getElementById("hud").textContent=`${sym} · ${state.perPoly?"θ "+polyTypes(state.tiling).map(n=>`${n}:${thetaFor(n)}°`).join(" "):`θ ${state.theta}°`} · paso ${k} de 5`;
+}
+const STEP_TITLES=["La retícula","Los rayos","Los cortes","Se borra la retícula","El entrelazado"];
+function stepText(k){
+  const t=TILINGS[state.tiling], girih=state.tiling.startsWith("G-"), name=t.name.split("· ")[girih?1:0].trim().toLowerCase();
+  const ang=state.perPoly?"un ángulo θ propio para cada tipo de polígono":`un ángulo θ = ${state.theta}° respecto al lado`;
+  if(k===1) return girih?`Se cubre el plano con piezas girih (${name}) sin dejar huecos. Todas tienen lados iguales y ángulos múltiplos de 36°.`
+    :`Se cubre el plano con polígonos regulares sin dejar huecos: ${name}. Es la estructura oculta del diseño.`;
+  if(k===2) return `Desde el punto medio de cada lado salen dos rayos hacia dentro, con ${ang}.`+(state.delta>0?` Aquí arrancan separados del punto medio (δ = ${state.delta.toFixed(2)}).`:"")+" Mueve θ para verlos girar.";
+  if(k===3) return "Cada rayo se prolonga hasta encontrarse con el del lado vecino; los puntos de corte forman las puntas de las estrellas."+(rosetteN()?" En las rosetas, las líneas siguen hacia dentro y vuelven a cruzarse para formar los pétalos.":"");
+  if(k===4) return "Se borran los polígonos. Quedan las estrellas y las formas que las rodean"+(state.fill?", que aquí se rellenan de color.":".");
+  return state.style==="lace"?"Las líneas se convierten en cintas que pasan alternando por encima y por debajo en cada cruce. Este es el dibujo terminado."
+    :"En el estilo Líneas el dibujo termina aquí. Cambia a Lacería para ver las cintas entrelazadas.";
+}
+function syncStep(){
+  $("stepCard").hidden=!step.active;
+  if(!step.active) return;
+  $("stepNum").textContent=`Paso ${step.k} de 5`;
+  $("stepTitle").textContent=STEP_TITLES[step.k-1];
+  $("stepText").textContent=stepText(step.k);
+  $("stepPrev").disabled=step.k===1;
+  $("stepNext").textContent=step.k===5?"Terminar":"Siguiente";
+  document.querySelectorAll("#stepDots button").forEach((b,i)=>{ if(i===step.k-1) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current"); });
+}
+function goStep(k){ step.k=Math.max(1,Math.min(5,k)); syncStep(); schedule(); }
+function openSteps(){ step.active=true; step.k=1; syncStep(); schedule();
+  const st=document.querySelector(".stage"), r=st.getBoundingClientRect(); if(r.top<0||r.bottom>window.innerHeight) st.scrollIntoView({block:"start"}); $("stepNext").focus({preventScroll:true}); }
+function closeSteps(){ step.active=false; syncStep(); schedule(); }
+for(let i=1;i<=5;i++){const b=document.createElement("button"); b.type="button"; b.setAttribute("aria-label",`Paso ${i}: ${STEP_TITLES[i-1]}`); b.onclick=()=>goStep(i); $("stepDots").appendChild(b);}
+$("stepOpen").onclick=openSteps;
+$("stepClose").onclick=closeSteps;
+$("stepPrev").onclick=()=>goStep(step.k-1);
+$("stepNext").onclick=()=>{ if(step.k===5) closeSteps(); else goStep(step.k+1); };
+document.addEventListener("keydown",e=>{
+  if(!step.active) return; const tg=e.target&&e.target.tagName; if(tg==="INPUT"||tg==="SELECT"||tg==="TEXTAREA") return;
+  if(e.key==="ArrowRight"){ e.preventDefault(); if(step.k<5) goStep(step.k+1); }
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); goStep(step.k-1); }
+  else if(e.key==="Escape"){ e.preventDefault(); closeSteps(); }
+});
+
+/* ---------- animar θ ---------- */
+// θ va y viene entre 20° y 82° con un vaivén suave (más lento en los extremos); empieza en el valor actual
+const ANIM_A=20, ANIM_B=82;
+let anim=null;
+function animTheta(ph){ return ANIM_A+(ANIM_B-ANIM_A)*(1-Math.cos(ph))/2; }
+function startAnim(){
+  const th=Math.max(ANIM_A,Math.min(ANIM_B,state.theta));
+  const offs={}; if(state.perPoly) for(const n of polyTypes(state.tiling)) offs[n]=thetaFor(n)-state.theta;
+  anim={t0:performance.now(), ph0:Math.acos(1-2*(th-ANIM_A)/(ANIM_B-ANIM_A)), offs, raf:0, frames:0};
+  clearPreset(); $("animBtn").setAttribute("aria-pressed","true"); $("animBtn").textContent="Pausar";
+  // mientras anima, el deslizador sigue al ángulo sin redondearlo a medios grados
+  $("theta").step="any"; document.querySelectorAll("#polyAngles input").forEach(i=>i.step="any");
+  anim.raf=requestAnimationFrame(animStep);
+}
+function stopAnim(){
+  if(!anim) return; cancelAnimationFrame(anim.raf); anim=null;
+  $("animBtn").setAttribute("aria-pressed","false"); $("animBtn").textContent="Animar θ";
+  // al parar, el ángulo se queda en el medio grado más cercano para que número y deslizador coincidan
+  state.theta=Math.round(state.theta*2)/2;
+  for(const n of Object.keys(state.thetaN)) state.thetaN[n]=Math.round(state.thetaN[n]*2)/2;
+  $("theta").step="0.5"; document.querySelectorAll("#polyAngles input").forEach(i=>i.step="0.5");
+  sync(); schedule();
+}
+function animStep(now){
+  if(!anim) return;
+  const ph=anim.ph0+2*Math.PI*(now-anim.t0)/(state.animPeriod*1000);
+  state.theta=Math.round(animTheta(ph)*10)/10;
+  if(state.perPoly) for(const n in anim.offs){ const k=isNaN(+n)?n:+n; state.thetaN[k]=Math.max(10,Math.min(85,Math.round((state.theta+anim.offs[n])*10)/10)); }
+  $("theta").value=state.theta; updatePolyValues();
+  render(); anim.frames++;
+  anim.raf=requestAnimationFrame(animStep);
+}
+$("animBtn").onclick=()=>{ anim?stopAnim():startAnim(); };
+document.querySelectorAll("#animSpeed button").forEach(b=>b.onclick=()=>{
+  const old=state.animPeriod, nw=+b.dataset.v;
+  // al cambiar la velocidad se mantiene el punto actual del vaivén (sin saltos)
+  if(anim){ const now=performance.now(), ph=anim.ph0+2*Math.PI*(now-anim.t0)/(old*1000); anim.ph0=ph; anim.t0=now; }
+  state.animPeriod=nw; syncSpeed();
+});
+function syncSpeed(){ document.querySelectorAll("#animSpeed button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.v===state.animPeriod))); }
+
+/* ---------- colores propios ---------- */
+let customKey="";
+function customRows(){
+  const rows=[["bg","Fondo"],["band","Cinta"],["outline","Borde de la cinta"],["line","Líneas (estilo Líneas)"]];
+  for(const n of polyTypes(state.tiling)) rows.push(["f:"+n,"Relleno · "+polyName(n).toLowerCase()]);
+  if(rosetteN()) rows.push(["f:c","Relleno · estrella central"]);
+  return rows;
+}
+function customValue(k){const b=PALETTES[state.palette]; if(state.custom[k]) return state.custom[k];
+  if(k.startsWith("f:")){const t=k.slice(2); return baseFill(b,t==="c"?"c":(isNaN(+t)?t:+t));} return b[k];}
+function buildCustom(){
+  const box=$("customRows"), rows=customRows(), key=rows.map(r=>r[0]).join("|");
+  if(key!==customKey){
+    customKey=key; box.innerHTML="";
+    for(const [k,label] of rows){
+      const id="c-"+k.replace(":","-"), row=document.createElement("label"); row.className="crow"; row.htmlFor=id;
+      row.innerHTML=`<span>${label}</span><input type="color" id="${id}">`; box.appendChild(row);
+      row.querySelector("input").addEventListener("input",e=>{state.custom[k]=e.target.value.toLowerCase(); clearPreset(); updateCustom(); buildColors(); syncPaint(); schedule();});
+    }
+  }
+  updateCustom();
+}
+function updateCustom(){
+  for(const [k] of customRows()){const i=$("c-"+k.replace(":","-")); if(!i) continue; i.value=customValue(k).toLowerCase(); i.parentElement.classList.toggle("mod",!!state.custom[k]);}
+  $("palName").textContent=PALETTES[state.palette].name+(Object.keys(state.custom).length?" · con tus colores":"");
+  $("customReset").disabled=!Object.keys(state.custom).length;
+}
+$("customToggle").onclick=()=>{const open=$("customBox").hidden; $("customBox").hidden=!open; $("customToggle").setAttribute("aria-expanded",String(open));};
+$("customReset").onclick=()=>{state.custom={}; updateCustom(); buildColors(); syncPaint(); schedule(); toast("Colores de la paleta restablecidos");};
+
+/* ---------- pintar huecos ---------- */
+const EXTRA=["#1d6a58","#28497a","#c48a2a","#a94b2a","#111111","#f4efe2"];
+const paintList=()=>state.paintBy[state.tiling]||(state.paintBy[state.tiling]=[]);
+function buildColors(){
+  const pal=curPal(), box=$("paintColors"), cm=colorMap();
+  // colores de la paleta primero; se descartan los casi idénticos a uno ya elegido
+  const rgb=(h)=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)), cols=[];
+  // primero los colores que ha elegido la persona, luego los de la paleta (con sus cambios) y los tradicionales
+  for(const c of [...Object.values(state.custom),pal.fill[12],pal.fill[8],pal.fill[6],pal.fill[4],pal.fill[3],pal.bg,pal.band,pal.outline,...EXTRA].map(c=>{c=c.toLowerCase(); return cm[c]||c;})){
+    const a=rgb(c); if(!cols.some(d=>{const b=rgb(d); return Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2])<24;})) cols.push(c);
+  }
+  cols.splice(14);
+  box.innerHTML="";
+  for(const c of cols){const b=document.createElement("button"); b.type="button"; b.className="cdot"; b.style.background=c; b.dataset.c=c; b.setAttribute("aria-label","Color "+c);
+    b.onclick=()=>{state.brush=c; state.tool="brush"; syncPaint();}; box.appendChild(b);}
+  const lab=document.createElement("label"); lab.className="cpick"; lab.title="Otro color"; lab.innerHTML='+<input type="color" id="paintCustom" aria-label="Elegir otro color">';
+  box.appendChild(lab);
+  lab.querySelector("input").addEventListener("input",e=>{state.brush=e.target.value.toLowerCase(); state.tool="brush"; syncPaint();});
+}
+function syncPaint(){
+  document.querySelectorAll("#tools button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.tool)));
+  let match=false;
+  document.querySelectorAll("#paintColors .cdot").forEach(b=>{const on=b.dataset.c===state.brush; if(on) match=true; b.setAttribute("aria-pressed",String(on&&state.tool==="brush"));});
+  const pick=document.querySelector("#paintColors .cpick"); if(pick){pick.setAttribute("aria-pressed",String(!match&&state.tool==="brush")); if(!match) pick.style.background=state.brush;}
+  $("paintRep").checked=state.paintRep;
+  $("autoColor").checked=state.autoColor; $("autoShuffle").disabled=!state.autoColor;
+  host.classList.toggle("painting",!!state.tool);
+  const n=paintList().filter(p=>p.color).length;
+  $("paintClear").disabled=paintList().length===0;
+  $("paintInfo").textContent= state.tool==="brush" ? "Toca un hueco del dibujo para pintarlo."
+    : state.tool==="eraser" ? "Toca un hueco pintado para quitarle el color."
+    : n ? `${n} ${n===1?"pincelada":"pinceladas"} en esta retícula.` : state.autoColor ? "Cada forma de hueco tiene su color." : "Elige Pincel y toca un hueco.";
+}
+function paintAt(x,y){
+  if(!lastView) return;
+  if(step.active&&step.k<5){ toast("Para pintar, ve al último paso o sal del modo paso a paso"); return; }
+  const fi=faceAt(lastView.faces,lastView.grid,x,y);
+  if(fi<0){
+    // fuera de cualquier hueco cerrado: es el fondo que rodea los lazos sueltos
+    const rest=paintList().filter(p=>!p.bg);
+    if(state.tool==="eraser"){ if(!lastView.bg){toast("El fondo no está pintado"); return;} state.paintBy[state.tiling]=rest; }
+    else { rest.push({bg:true,color:state.brush}); state.paintBy[state.tiling]=rest; toast("Fondo pintado"); }
+    syncPaint(); schedule(); return;
+  }
+  const list=paintList(), per=lastView.per||[], covers=(k)=>per[k]&&per[k].has(fi);
+  const P=viewXform(lastView.W,lastView.H).toP(x,y);
+  if(state.tool==="eraser"){
+    const covering=list.map((p,k)=>covers(k)&&p.color?k:-1).filter(k=>k>=0);
+    if(!covering.length){
+      const blanked=list.some((p,k)=>covers(k)&&p.color===null);
+      if(lastView.auto&&lastView.auto.has(fi)&&!blanked){
+        // dejar sin color un hueco que solo tenía color automático
+        list.push({x:P[0],y:P[1],color:null,rep:state.paintRep}); syncPaint(); schedule(); return;
+      }
+      toast("Ese hueco no está pintado"); return;
+    }
+    // se quitan las pinceladas de ese hueco; si una se repite y la goma no, se tapa solo este
+    const keep=list.filter((p,k)=>!(covers(k)&&(state.paintRep||!p.rep)));
+    const still=keep.some((p)=>{const k=list.indexOf(p); return covers(k)&&p.color;});
+    state.paintBy[state.tiling]=keep;
+    if(still) keep.push({x:P[0],y:P[1],color:null,rep:false});
+  } else {
+    state.paintBy[state.tiling]=list.filter((p,k)=>!(covers(k)&&!(p.rep&&!state.paintRep)));
+    state.paintBy[state.tiling].push({x:P[0],y:P[1],color:state.brush,rep:state.paintRep});
+  }
+  syncPaint(); schedule();
+}
+document.querySelectorAll("#tools button").forEach(b=>b.onclick=()=>{state.tool=state.tool===b.dataset.v?null:b.dataset.v; syncPaint();});
+$("autoColor").onchange=()=>{state.autoColor=$("autoColor").checked; clearPreset(); syncPaint(); schedule();};
+$("autoShuffle").onclick=()=>{state.autoSeed++; schedule();};
+$("paintRep").onchange=()=>{state.paintRep=$("paintRep").checked;};
+$("paintClear").onclick=()=>{state.paintBy[state.tiling]=[]; syncPaint(); schedule(); toast("Pintura quitada");};
+
+// desplazar arrastrando; un toque sin arrastrar pinta si hay herramienta
+const host=$("host"); let drag=null;
+host.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,px:state.panX,py:state.panY,moved:false}; host.setPointerCapture(e.pointerId);});
+host.addEventListener("pointermove",e=>{if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)<6) return; drag.moved=true; state.panX=drag.px+dx; state.panY=drag.py+dy; schedule();});
+host.addEventListener("pointerup",e=>{ if(drag&&!drag.moved&&state.tool){const r=host.getBoundingClientRect(); paintAt(e.clientX-r.left,e.clientY-r.top);} drag=null;});
+host.addEventListener("pointercancel",()=>{drag=null;});
+new ResizeObserver(schedule).observe(host);
+
+sync(0); buildColors(); syncPaint(); syncSpeed(); syncExport(); renderFavs(); render();
+H.list=[snap()]; H.i=0; H.ready=true; syncHist();
+</script>
+
+</body></html>

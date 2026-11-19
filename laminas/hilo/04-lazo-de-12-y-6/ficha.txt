@@ -1,0 +1,13 @@
+Taller de Lacería · ficha del diseño
+Retícula: Propia · Estrellas de 12 y 6 (a)
+Procedencia: Retícula propia, encontrada por el buscador del Taller de Lacería (polígonos regulares en contacto en una red periódica; los huecos son las piezas de relleno): polígono regular de 12 lados con 2 de 6 lados en contacto lado con lado.
+Red de repetición: T1 = (4.0981, -2.3660), T2 = (4.0981, 2.3660)
+Ángulo de contacto: θ = 54°
+Decoración: método de polígonos en contacto (líneas desde el punto medio de cada lado con el ángulo θ). En las piezas irregulares, cada línea se une con la primera que encuentra de frente.
+Fuentes del método:
+  · E. H. Hankin (1925), The Drawing of Geometric Patterns in Saracenic Art, Memoirs of the Archaeological Survey of India, 15.
+  · C. S. Kaplan (2005), Islamic Star Patterns from Polygons in Contact, Graphics Interface 2005.
+Datos de terceros: ninguno.
+Herramienta: diseño creado con el Taller de Lacería, desarrollado con ayuda de una IA (Claude, de Anthropic).
+Código del diseño: LAC1.eyJ0IjoiUC0xMyIsImEiOjU0LCJwcCI6MCwiYW4iOnt9LCJkIjowLCJzYyI6NDkuNTE5OTA1NDY3NjcxNjM0LCJyIjowLCJweCI6MCwicHkiOjAsInMiOjAsInciOjcsImYiOjAsImciOjAsInBsIjoiaXNmYWhhbiIsImMiOnt9LCJybyI6MCwicnMiOjAuNiwicHMiOjAuNiwiYWMiOjEsImFzIjoxLCJqIjoibWl0ZXIiLCJvIjowLjIyLCJwYiI6W119
+Fecha: 19 de noviembre de 2026
