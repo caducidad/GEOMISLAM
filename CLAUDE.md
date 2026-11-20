@@ -27,6 +27,7 @@ El autor ha delegado en Claude la elección y el afinado de las láminas y la co
 - Cada lámina se guarda con su `lamina.svg` (por capas), `diseno.txt` (código `LAC1…`) y `ficha.txt` (procedencia).
 
 ## Documentos de referencia
+- `docs/estado.md`: **leer primero al retomar el trabajo**; dónde estamos y siguientes pasos.
 - `docs/indice.md`: estructura del libro.
 - `docs/decisiones.md`: decisiones tomadas y su porqué.
 - `docs/laminas-hilo.md`: láminas que reaparecen en los movimientos I a III.

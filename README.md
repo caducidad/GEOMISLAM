@@ -8,13 +8,17 @@ El libro propone un recorrido **del muro al compás**. El lector empieza delante
 
 ## Estado
 
+> Para retomar el trabajo, empieza por [`docs/estado.md`](docs/estado.md): dónde estamos, qué falta y cómo continuar.
+
+
 | Parte | Estado |
 |---|---|
-| Índice del libro | Definido · [`docs/indice.md`](docs/indice.md) |
+| Índice del libro (100 láminas) | Definido · [`docs/indice.md`](docs/indice.md) |
 | Decisiones de enfoque | Registradas · [`docs/decisiones.md`](docs/decisiones.md) |
 | Taller de diseño (aplicación) | Funcionando, con exportación por capas · [`taller/`](taller/) |
-| Láminas hilo | Propuesta de 6, pendiente de aprobación · [`docs/laminas-hilo.md`](docs/laminas-hilo.md) |
-| Maquetador | Por construir · [`maquetador/`](maquetador/) |
+| Láminas hilo | 12 elegidas y aprobadas · [`docs/laminas-hilo.md`](docs/laminas-hilo.md) |
+| Maquetador | Primera versión; formato aprobado con el lazo de 8 · [`maquetador/`](maquetador/), [`maqueta/`](maqueta/) |
+| Láminas de acompañamiento y textos | Por hacer |
 
 ## Estructura
 
@@ -23,7 +27,9 @@ taller/        Taller de Lacería: la aplicación con la que se diseñan todos l
 laminas/hilo/  Las láminas que reaparecen en los movimientos I, II y III
                (cada una con su SVG por capas, su código de diseño y su ficha de procedencia)
 maquetador/    Herramienta que convierte una lámina en todas sus páginas derivadas
-docs/          Índice del libro, decisiones y criterios
+maqueta/       Páginas ya maquetadas (SVG, PNG y PDF)
+herramientas/  Reexportar láminas desde su código y medirlas
+docs/          Estado del proyecto, índice del libro, decisiones y criterios
 ```
 
 ## El libro en cuatro movimientos
