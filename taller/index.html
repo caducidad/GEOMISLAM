@@ -197,6 +197,18 @@ select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--
         </div>
         <div class="slider"><label for="outline">Grosor del borde</label><output id="outlineV"></output>
           <input type="range" id="outline" min="0" max="0.5" step="0.01"></div>
+        <label class="check"><input type="checkbox" id="relief"> Relieve con luz y sombras</label>
+        <div class="sub-angles" id="reliefBox" hidden>
+          <div class="seg" id="reliefProfile" role="group" aria-label="Perfil de la cinta">
+            <button type="button" data-v="round">Redondeada ( )</button><button type="button" data-v="ridge">Con arista /\</button>
+          </div>
+          <div class="slider"><label for="lightFrom">Luz desde</label><output id="lightFromV"></output>
+            <input type="range" id="lightFrom" min="0" max="355" step="5"></div>
+          <div class="slider"><label for="reliefDepth">Profundidad</label><output id="reliefDepthV"></output>
+            <input type="range" id="reliefDepth" min="0.3" max="2" step="0.05"></div>
+          <div class="slider"><label for="reliefShadow">Sombra</label><output id="reliefShadowV"></output>
+            <input type="range" id="reliefShadow" min="0" max="1" step="0.05"></div>
+        </div>
       </div>
       <label class="check"><input type="checkbox" id="fill"> Rellenar estrellas</label>
       <label class="check"><input type="checkbox" id="guide"> Mostrar retícula de construcción</label>
@@ -228,7 +240,7 @@ select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--
 
     <div class="actions">
       <button type="button" class="btn primary" id="random">Sorpréndeme</button>
-      <button type="button" class="btn" id="exportToggle" aria-expanded="false" aria-controls="exportBox">Descargar SVG</button>
+      <button type="button" class="btn" id="exportToggle" aria-expanded="false" aria-controls="exportBox">Descargar</button>
     </div>
     <div class="sub-angles" id="exportBox" hidden>
       <span class="sublabel" id="expSizeLabel">Tamaño de papel</span>
@@ -238,8 +250,11 @@ select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--
       <div class="seg" id="expOrient" role="group" aria-label="Orientación">
         <button type="button" data-v="p">Vertical</button><button type="button" data-v="l">Horizontal</button>
       </div>
+      <div class="seg" id="expFormat" role="group" aria-label="Formato">
+        <button type="button" data-v="svg">SVG (vector)</button><button type="button" data-v="png">PNG · 300 ppp</button>
+      </div>
       <label class="check"><input type="checkbox" id="expMargin"> Margen blanco de 10 mm</label>
-      <p class="hint" id="expInfo">El dibujo se genera para la hoja entera, a la misma escala que ves en pantalla (en A3 cabe más diseño). La ficha de procedencia va dentro del archivo.</p>
+      <p class="hint" id="expInfo">El dibujo se genera para la hoja entera, a la misma escala que ves en pantalla (en A3 cabe más diseño). La ficha de procedencia va dentro del archivo. Con relieve, el PNG lo conserva tal cual en cualquier programa.</p>
       <div class="saverow"><button type="button" class="btn primary" id="expSave">Descargar</button><button type="button" class="btn" id="copy">Copiar SVG</button></div>
     </div>
     <textarea id="svgOut" hidden readonly aria-label="Código SVG"></textarea>
@@ -395,7 +410,7 @@ const PRESETS = [
   {name:"Girih", s:{tiling:"G-dpr",theta:54,delta:0,palette:"almagra",style:"lace",fill:true}},
   {name:"Celosía", s:{tiling:"3.4.6.4",theta:58,delta:0,palette:"tinta",style:"lines",fill:false}},
 ];
-const state = {expSize:"A4",expOrient:"p",expMargin:false,animPeriod:10,join:"miter",outline:0.22,custom:{},rosette:false,rosetteSize:0.6,petalShape:0.6,autoColor:false,autoSeed:0,paintBy:{},tool:null,brush:"#1d6a58",paintRep:true,perPoly:false,thetaN:{},tiling:"4.8.8",theta:67.5,delta:0,scale:56,rot:0,style:"lace",width:6,fill:true,guide:false,palette:"fez",panX:0,panY:0};
+const state = {reliefProfile:"round",relief:false,lightFrom:315,reliefDepth:1,reliefShadow:0.6,expFormat:"svg",expSize:"A4",expOrient:"p",expMargin:false,animPeriod:10,join:"miter",outline:0.22,custom:{},rosette:false,rosetteSize:0.6,petalShape:0.6,autoColor:false,autoSeed:0,paintBy:{},tool:null,brush:"#1d6a58",paintRep:true,perPoly:false,thetaN:{},tiling:"4.8.8",theta:67.5,delta:0,scale:56,rot:0,style:"lace",width:6,fill:true,guide:false,palette:"fez",panX:0,panY:0};
 
 /* ---------- geometría ---------- */
 function polyPts(cx,cy,n,startDeg){
@@ -965,6 +980,7 @@ function render(exp){
     out+=`<path d="${tiles.map(t=>polyD(t.pts,true)).join("")}" fill="none" stroke="${pal.guide}" stroke-width="1" stroke-dasharray="4 3"/>`;
   }
   const sd=strands.map(s=>polyD(s.pts,s.closed)).join("");
+  let relief="";
   layer("cintas",state.style==="lace"?"Cintas entrelazadas":"Líneas");
   if(state.style==="lace"){
     if(o>0) out+=`<path d="${sd}" fill="none" stroke="${pal.outline}" stroke-width="${f(w+2*o)}" ${J}/>`;
@@ -991,13 +1007,28 @@ function render(exp){
       for(const pts of sub(st,p.L-hl,p.L+hl)) pieces.push(polyD(pts,false));
       for(const pts of sub(st,p.L-hl+trim,p.L+hl-trim)) piecesO.push(polyD(pts,false));
     }
+    // para el relieve: los trozos de cinta que pasan POR DEBAJO junto a cada cruce (donde cae la sombra del tramo de arriba)
+    const under=[];
+    if(state.relief) for(let pi=0;pi<passes.length;pi++){
+      const p=passes[pi]; if(p.over===1) continue;
+      const st=strands[p.st], cr=crosses[p.c], sA=Math.max(cr.sin,0.3), cA=Math.sqrt(Math.max(0,1-sA*sA));
+      let hu=(w/2+o)*(1+cA)/sA+(w+2*o)*0.9*state.reliefDepth+2;
+      const P=st.passes, k=posIn[pi];
+      const gap=(q)=>{let d=Math.abs(passes[q].L-p.L); if(st.closed) d=Math.min(d,st.total-d); return d;};
+      if(P.length>1){ const prev=k>0?P[k-1]:(st.closed?P[P.length-1]:-1), next=k<P.length-1?P[k+1]:(st.closed?P[0]:-1);
+        for(const q of [prev,next]) if(q>=0&&q!==pi) hu=Math.min(hu,0.5*gap(q)); }
+      for(const pts of sub(st,p.L-hu,p.L+hu)) under.push(polyD(pts,false));
+    }
     const pd=pieces.join(""), pdO=piecesO.join("");
     if(o>0) out+=`<path d="${pdO}" fill="none" stroke="${pal.outline}" stroke-width="${f(w+2*o)}" ${J}/>`;
     out+=`<path d="${pd}" fill="none" stroke="${pal.band}" stroke-width="${f(w)}" ${J}/>`;
+    if(state.relief) relief=reliefLayer(W,H,sd,pd,under.join(""),w,o,J);
   } else {
     out+=`<path d="${sd}" fill="none" stroke="${pal.line}" stroke-width="${f(w*0.45+0.6)}" stroke-linejoin="round" stroke-linecap="round"/>`;
   }
   endLayer();
+  // el relieve va en su propia capa, encima de las cintas: se puede ocultar sin tocar el dibujo
+  if(relief){ layer("relieve","Relieve (luces y sombras)"); out+=relief; endLayer(); }
   if(ex){
     // datos para el maquetador (capas ocultas): cada pieza cerrada con su clase de forma, el trazado central
     // de las cintas y la celda que se repite
@@ -1033,7 +1064,7 @@ const tilingSel=$("tiling");
     tilingSel.appendChild(g); } }
 const presetsEl=$("presets");
 PRESETS.forEach((p,i)=>{const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=p.name; b.dataset.i=i;
-  b.onclick=()=>{stopAnim(); Object.assign(state,{width:6,join:"miter",outline:0.22,perPoly:false,autoColor:false,rosette:false,rosetteSize:0.6,petalShape:0.6},p.s,{thetaN:{...(p.s.thetaN||{})},paintBy:{},custom:{},rot:0,panX:0,panY:0}); sync(i); buildColors(); syncPaint(); schedule();}; presetsEl.appendChild(b);});
+  b.onclick=()=>{stopAnim(); Object.assign(state,{width:6,join:"miter",outline:0.22,relief:false,perPoly:false,autoColor:false,rosette:false,rosetteSize:0.6,petalShape:0.6},p.s,{thetaN:{...(p.s.thetaN||{})},paintBy:{},custom:{},rot:0,panX:0,panY:0}); sync(i); buildColors(); syncPaint(); schedule();}; presetsEl.appendChild(b);});
 const palEl=$("palettes");
 for(const k in PALETTES){const p=PALETTES[k], b=document.createElement("button"); b.type="button"; b.className="sw"; b.dataset.v=k; b.title=p.name; b.setAttribute("aria-label",p.name);
   for(const c of [p.bg,p.fill[8],p.fill[3],p.outline]){const s=document.createElement("span"); s.style.background=c; b.appendChild(s);}
@@ -1079,6 +1110,9 @@ function sync(presetIdx){
   document.querySelectorAll("#join button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.join)));
   $("outline").value=state.outline; $("outlineV").textContent=outlineLabel();
   $("laceOpts").hidden=state.style!=="lace";
+  document.querySelectorAll("#reliefProfile button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.reliefProfile)));
+  $("relief").checked=state.relief; $("reliefBox").hidden=!state.relief;
+  $("lightFrom").value=state.lightFrom; $("reliefDepth").value=state.reliefDepth; $("reliefShadow").value=state.reliefShadow; syncReliefLabels();
   $("fill").checked=state.fill; $("guide").checked=state.guide; $("perPoly").checked=state.perPoly;
   buildPolySliders(); if(step.active) syncStep();
   $("rosette").checked=state.rosette; $("rosBox").hidden=!state.rosette;
@@ -1116,6 +1150,10 @@ $("fill").onchange=()=>{state.fill=$("fill").checked; schedule();};
 $("guide").onchange=()=>{state.guide=$("guide").checked; schedule();};
 document.querySelectorAll("#style button").forEach(b=>b.onclick=()=>{state.style=b.dataset.v; sync(); schedule();});
 const outlineLabel=()=>state.outline<=0?"sin borde":Math.round(state.outline*100)+" % de la cinta";
+function syncReliefLabels(){ $("lightFromV").textContent=`${lightName(state.lightFrom)} (${state.lightFrom}°)`; $("reliefDepthV").textContent=Math.round(state.reliefDepth*100)+" %"; $("reliefShadowV").textContent=Math.round(state.reliefShadow*100)+" %"; }
+document.querySelectorAll("#reliefProfile button").forEach(b=>b.onclick=()=>{state.reliefProfile=b.dataset.v; clearPreset(); sync(); schedule();});
+$("relief").onchange=()=>{state.relief=$("relief").checked; clearPreset(); sync(); schedule();};
+for(const id of ["lightFrom","reliefDepth","reliefShadow"]) $(id).addEventListener("input",()=>{state[id]=parseFloat($(id).value); syncReliefLabels(); clearPreset(); schedule();});
 document.querySelectorAll("#join button").forEach(b=>b.onclick=()=>{state.join=b.dataset.v; clearPreset(); sync(); schedule();});
 $("outline").addEventListener("input",()=>{state.outline=parseFloat($("outline").value); $("outlineV").textContent=outlineLabel(); clearPreset(); schedule();});
 
@@ -1132,6 +1170,7 @@ $("random").onclick=()=>{
   state.style=Math.random()<0.8?"lace":"lines";
   state.fill=Math.random()<0.75;
   state.rot=0; state.panX=0; state.panY=0; state.paintBy={}; state.custom={};
+  state.relief=Math.random()<0.25; state.reliefProfile=Math.random()<0.5?"round":"ridge"; state.lightFrom=[315,0,45,270][Math.floor(Math.random()*4)];
   state.join=Math.random()<0.6?"miter":(Math.random()<0.5?"round":"bevel"); state.outline=Math.round(r(0.12,0.35)*100)/100;
   state.autoColor=Math.random()<0.5; state.autoSeed=Math.floor(Math.random()*1000);
   state.rosette=Math.random()<0.3; state.rosetteSize=Math.round(r(0.4,0.8)*100)/100; state.petalShape=Math.round(r(0,1)*100)/100;
@@ -1165,7 +1204,7 @@ function provenance(){
     const lines=["Taller de Lacería · ficha del diseño",
       `Retícula: ${T.name}`, `Procedencia: ${kind}`, `Red de repetición: T1 = ${fmt(T.T1)}, T2 = ${fmt(T.T2)}`,
       `Ángulo de contacto: `+(state.perPoly?polyTypes(k).map(n=>`${polyName(n).toLowerCase()} ${thetaFor(n)}°`).join(", "):`θ = ${state.theta}°`)+(state.delta>0?`; separación δ = ${state.delta}`:""),
-      "Decoración: método de polígonos en contacto (líneas desde el punto medio de cada lado con el ángulo θ)."+(T.polys.some(q=>!Array.isArray(q))?" En las piezas irregulares, cada línea se une con la primera que encuentra de frente.":"")+(state.rosette&&rosetteN()?" Rosetas: construcción propia del Taller.":""),
+      "Decoración: método de polígonos en contacto (líneas desde el punto medio de cada lado con el ángulo θ)."+(state.relief&&state.style==="lace"?` Relieve ${state.reliefProfile==="ridge"?"con arista (/\\)":"redondeado"}: luz desde ${lightName(state.lightFrom)} (${state.lightFrom}°), profundidad ${Math.round(state.reliefDepth*100)} %, sombra ${Math.round(state.reliefShadow*100)} %.`:"")+(T.polys.some(q=>!Array.isArray(q))?" En las piezas irregulares, cada línea se une con la primera que encuentra de frente.":"")+(state.rosette&&rosetteN()?" Rosetas: construcción propia del Taller.":""),
       "Fuentes del método:", ...src.map(x=>"  · "+SOURCES[x]),
       "Datos de terceros: ninguno.",
       "Herramienta: diseño creado con el Taller de Lacería, desarrollado con ayuda de una IA (Claude, de Anthropic).",
@@ -1185,6 +1224,8 @@ function designOf(){
   return {t, a:state.theta, pp:state.perPoly?1:0, an, d:state.delta, sc:state.scale, r:state.rot, px:Math.round(state.panX), py:Math.round(state.panY),
     s:state.style==="lines"?1:0, w:state.width, f:state.fill?1:0, g:state.guide?1:0, pl:state.palette, c:{...state.custom},
     ro:state.rosette?1:0, rs:state.rosetteSize, ps:state.petalShape, ac:state.autoColor?1:0, as:state.autoSeed, j:state.join, o:state.outline,
+    // el relieve solo entra en el código si está puesto: así los códigos de siempre no cambian
+    ...(state.relief?{rl:1, rp:state.reliefProfile==="ridge"?1:0, lf:state.lightFrom, rd:state.reliefDepth, rh:state.reliefShadow}:{}),
     pb:(state.paintBy[t]||[]).map(q=>q.bg?["b",q.color]:[r4(q.x),r4(q.y),q.color,q.rep?1:0])};
 }
 function encodeDesign(d){
@@ -1221,7 +1262,8 @@ function decodeDesign(code){
   return {tiling:d.t, theta:num(d.a,10,85,67.5), perPoly:!!d.pp, thetaN, delta:num(d.d,0,0.45,0), scale:num(d.sc,24,160,56), rot:num(d.r,0,90,0),
     panX:num(d.px,-1e4,1e4,0), panY:num(d.py,-1e4,1e4,0), style:d.s?"lines":"lace", width:num(d.w,1,16,6), fill:!!d.f, guide:!!d.g,
     palette:PALETTES[d.pl]?d.pl:"fez", custom, rosette:!!d.ro, rosetteSize:num(d.rs,0.4,0.85,0.6), petalShape:num(d.ps,0,1,0.6),
-    autoColor:!!d.ac, autoSeed:Math.round(num(d.as,0,1e9,0)), join:["miter","round","bevel"].includes(d.j)?d.j:"miter", outline:num(d.o,0,0.5,0.22),
+    autoColor:!!d.ac, autoSeed:Math.round(num(d.as,0,1e9,0)), join:["miter","round","bevel"].includes(d.j)?d.j:"miter",
+    relief:!!d.rl, reliefProfile:d.rp?"ridge":"round", lightFrom:Math.round(num(d.lf,0,355,315)/5)*5, reliefDepth:num(d.rd,0.3,2,1), reliefShadow:num(d.rh,0,1,0.6), outline:num(d.o,0,0.5,0.22),
     paintBy:{[d.t]:pb}};
 }
 function applyDesign(st){
@@ -1285,6 +1327,48 @@ $("favSave").onclick=async()=>{
 };
 $("favName").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); $("favSave").click(); } });
 
+/* ---------- relieve: luz y sombras sobre las cintas ---------- */
+// Una copia de las cintas «en gris» codifica la altura: cinta normal = gris medio, tramo de arriba en un cruce = blanco.
+// Un filtro de iluminación de SVG convierte esa altura en brillos (lado de la luz) y sombras (lado contrario),
+// y añade la sombra que el tramo de arriba proyecta sobre la cinta de abajo y la de toda la lacería sobre el fondo.
+// El dibujo de colores no se toca: esto es una capa de luces y sombras encima.
+const LIGHT_NAMES=["arriba","arriba a la derecha","derecha","abajo a la derecha","abajo","abajo a la izquierda","izquierda","arriba a la izquierda"];
+const lightName=(a)=>LIGHT_NAMES[Math.round(((a%360)+360)%360/45)%8];
+let reliefId=0;
+function reliefLayer(W,H,sd,pd,ud,w,o,J){
+  const id="relieve"+(++reliefId), bw=w+2*o, d=state.reliefDepth, sh=state.reliefShadow;
+  const az=((state.lightFrom-90)%360+360)%360, E=40, f0=Math.sin(E*Math.PI/180);
+  const rad=az*Math.PI/180, off=Math.max(1,bw*0.32*d), dx=f(-Math.cos(rad)*off), dy=f(-Math.sin(rad)*off);
+  const ridge=state.reliefProfile==="ridge", N=ridge?10:1;
+  // perfil redondeado ( ): una sola franja de altura y mucho difuminado.
+  // perfil con arista /\: franjas concéntricas cada vez más altas hacia el centro, apenas difuminadas,
+  // que dan dos caras planas (una a la luz, otra en sombra) y una arista viva en el medio
+  const blur=f(ridge?Math.max(0.35,bw/N*0.7):Math.max(0.6,bw*0.3)), S=f(ridge?bw*0.75*d:bw*0.35*d), kh=ridge?1.5:1.8, ks=ridge?1.0:1.2;
+  const hex=(v)=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,"0");
+  const rings=(dd,R,B,g0,g1)=>{ let t=""; for(let k=0;k<N;k++){ const g=N===1?g1:g0+(g1-g0)*k/(N-1);
+      t+=`<path d="${dd}" fill="none" stroke="#${R}${hex(g)}${B}" stroke-width="${f(bw*(N-k)/N)}" ${J}/>`; } return t; };
+  return `<defs><filter id="${id}" filterUnits="userSpaceOnUse" x="0" y="0" width="${f(W)}" height="${f(H)}" color-interpolation-filters="sRGB">`
+    +`<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 1 0 0 0" result="h0"/>`+`<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="und"/>`
+    +`<feGaussianBlur in="h0" stdDeviation="${blur}" result="hb"/>`
+    +`<feDiffuseLighting in="hb" surfaceScale="${S}" diffuseConstant="1" lighting-color="#ffffff" result="lit"><feDistantLight azimuth="${az}" elevation="${E}"/></feDiffuseLighting>`
+    +`<feColorMatrix in="lit" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  ${kh} 0 0 0 ${f(-f0*kh*100)/100}" result="hi"/>`
+    +`<feColorMatrix in="lit" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${-ks} 0 0 0 ${f(f0*ks*100)/100}" result="lo"/>`
+    +`<feMerge result="shade"><feMergeNode in="lo"/><feMergeNode in="hi"/></feMerge>`
+    +`<feComposite in="shade" in2="SourceAlpha" operator="in" result="shadeIn"/>`
+    +`<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0" result="top"/>`
+    +`<feOffset in="top" dx="${dx}" dy="${dy}" result="topOff"/><feGaussianBlur in="topOff" stdDeviation="${f(blur*0.7)}" result="topBl"/>`
+    +`<feComposite in="topBl" in2="top" operator="out" result="topOut"/><feComposite in="topOut" in2="und" operator="in" result="cast"/>`
+    +`<feColorMatrix in="cast" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 ${f(0.85*sh*100)/100} 0" result="castDark"/>`
+    +`<feOffset in="SourceAlpha" dx="${dx}" dy="${dy}" result="allOff"/><feGaussianBlur in="allOff" stdDeviation="${f(blur*1.3)}" result="allBl"/>`
+    +`<feComposite in="allBl" in2="SourceAlpha" operator="out" result="ground"/>`
+    +`<feColorMatrix in="ground" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 ${f(0.6*sh*100)/100} 0" result="groundDark"/>`
+    +`<feMerge><feMergeNode in="groundDark"/><feMergeNode in="castDark"/><feMergeNode in="shadeIn"/></feMerge>`
+    +`</filter></defs><g filter="url(#${id})">`
+    +rings(sd,"00","00",0.22,ridge?0.62:0.706)
+    +(ud?rings(ud,"ff","00",0.22,ridge?0.62:0.706):"")
+    +rings(pd,"00","ff",ridge?0.22:0.58,ridge?0.62:1)+`</g>`;
+}
+
 /* ---------- descargar en A4 / A3 ---------- */
 const PX_PER_MM=96/25.4, PAPER={A4:[210,297],A3:[297,420]};
 const xmlEsc=(t)=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -1305,25 +1389,51 @@ function exportSVG(){
     +(m?`<rect width="${f(W)}" height="${f(H)}" fill="#ffffff"/>`:"")
     +body+`</svg>`;
 }
+// PNG a 300 ppp con la ficha dentro (bloque de texto iTXt del PNG)
+const CRC_T=(()=>{const t=new Uint32Array(256); for(let n=0;n<256;n++){let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0;} return t;})();
+function crc32(bytes){let c=0xFFFFFFFF; for(const b of bytes) c=CRC_T[(c^b)&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0;}
+function withText(pngBuf,keyword,text){
+  const src=new Uint8Array(pngBuf), enc=new TextEncoder(), kw=enc.encode(keyword), tx=enc.encode(text);
+  const data=new Uint8Array(kw.length+5+tx.length); data.set(kw,0); /* \0, sin comprimir, método 0, idioma vacío \0, palabra traducida vacía \0 */ data.set(tx,kw.length+5);
+  const type=enc.encode("iTXt"), chunk=new Uint8Array(12+data.length), dv=new DataView(chunk.buffer);
+  dv.setUint32(0,data.length); chunk.set(type,4); chunk.set(data,8);
+  const crcIn=new Uint8Array(4+data.length); crcIn.set(type,0); crcIn.set(data,4); dv.setUint32(8+data.length,crc32(crcIn));
+  // y la resolución: 300 ppp = 11811 píxeles por metro (bloque pHYs), para que el programa de imprenta lo lea a su tamaño
+  const ph=new Uint8Array(21), pv=new DataView(ph.buffer); pv.setUint32(0,9); ph.set(enc.encode("pHYs"),4); pv.setUint32(8,11811); pv.setUint32(12,11811); ph[16]=1; pv.setUint32(17,crc32(ph.subarray(4,17)));
+  const at=8+25; const out=new Uint8Array(src.length+chunk.length+ph.length); out.set(src.subarray(0,at),0); out.set(ph,at); out.set(chunk,at+ph.length); out.set(src.subarray(at),at+ph.length+chunk.length);
+  return out;
+}
+async function exportPNG(){
+  const [wmm,hmm]=paperDims(), Wp=Math.round(wmm/25.4*300), Hp=Math.round(hmm/25.4*300);
+  const svg=exportSVG(), img=new Image(); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg); await img.decode();
+  const c=document.createElement("canvas"); c.width=Wp; c.height=Hp; const g=c.getContext("2d");
+  g.fillStyle="#ffffff"; g.fillRect(0,0,Wp,Hp); g.drawImage(img,0,0,Wp,Hp);
+  const blob=await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error("png")),"image/png"));
+  const ficha=svg.match(/<desc>([\s\S]*?)<\/desc>/)[1].replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");
+  return new Blob([withText(await blob.arrayBuffer(),"Description",ficha)],{type:"image/png"});
+}
 function exportName(){
   const base=TILINGS[state.tiling].name.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-+|-+$/g,"").toLowerCase();
-  return `laceria-${base}-${state.expSize}-${state.expOrient==="l"?"horizontal":"vertical"}.svg`;
+  return `laceria-${base}-${state.expSize}-${state.expOrient==="l"?"horizontal":"vertical"}.${state.expFormat==="png"?"png":"svg"}`;
 }
 let downloadsNS=null;
 function syncExport(){
   document.querySelectorAll("#expSize button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.expSize)));
   document.querySelectorAll("#expOrient button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.expOrient)));
   $("expMargin").checked=state.expMargin;
+  document.querySelectorAll("#expFormat button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===state.expFormat)));
 }
 $("exportToggle").onclick=()=>{const open=$("exportBox").hidden; $("exportBox").hidden=!open; $("exportToggle").setAttribute("aria-expanded",String(open));};
 document.querySelectorAll("#expSize button").forEach(b=>b.onclick=()=>{state.expSize=b.dataset.v; syncExport();});
 document.querySelectorAll("#expOrient button").forEach(b=>b.onclick=()=>{state.expOrient=b.dataset.v; syncExport();});
 $("expMargin").onchange=()=>{state.expMargin=$("expMargin").checked;};
+document.querySelectorAll("#expFormat button").forEach(b=>b.onclick=()=>{state.expFormat=b.dataset.v; syncExport();});
 $("expSave").onclick=async()=>{
   if(!downloadsNS){ toast("Este visor no permite descargar archivos: usa «Copiar SVG»"); return; }
   const btn=$("expSave"); btn.disabled=true;
   try{
-    const data=new Blob([exportSVG()],{type:"image/svg+xml"});
+    if(state.expFormat==="png") toast("Preparando el PNG…");
+    const data=state.expFormat==="png"?await exportPNG():new Blob([exportSVG()],{type:"image/svg+xml"});
     await downloadsNS.save({filename:exportName(), data});
     toast(`${state.expSize} descargado`);
   }catch(e){
@@ -1343,7 +1453,7 @@ $("expSave").onclick=async()=>{
 // Los cambios seguidos (un arrastre de deslizador) se agrupan en un paso; un clic, un toque o una tecla
 // cierran el paso anterior, así que cada pincelada o cada botón cuenta por separado.
 const HIST_MAX=100;
-const HIST_KEYS=["tiling","theta","perPoly","thetaN","delta","scale","rot","style","width","fill","guide","palette","custom","rosette","rosetteSize","petalShape","autoColor","autoSeed","join","outline","paintBy"];
+const HIST_KEYS=["reliefProfile","relief","lightFrom","reliefDepth","reliefShadow","tiling","theta","perPoly","thetaN","delta","scale","rot","style","width","fill","guide","palette","custom","rosette","rosetteSize","petalShape","autoColor","autoSeed","join","outline","paintBy"];
 function snap(){ const o={}; for(const k of HIST_KEYS) o[k]=state[k]; return JSON.stringify(o); }
 function noteChange(){ if(!H.ready||anim) return; clearTimeout(H.timer); H.timer=setTimeout(commitHist,400); }
 function commitHist(){

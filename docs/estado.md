@@ -30,7 +30,7 @@ El enfoque del libro, el índice de 100 láminas y las 12 láminas hilo están d
 
 | Pieza | Dónde | Notas |
 |---|---|---|
-| Taller de Lacería con exportación por capas | `taller/index.html` | Capas: fondo, estrellas, pintura, retícula, cintas y capas de datos ocultas (piezas con `data-clase`, trazado central, celda con `data-t1`/`data-t2`). Cada SVG lleva su código `LAC1…` |
+| Taller de Lacería con exportación por capas | `taller/index.html` | Capas: fondo, estrellas, pintura, retícula, cintas y capas de datos ocultas (piezas con `data-clase`, trazado central, celda con `data-t1`/`data-t2`). Cada SVG lleva su código `LAC1…`. También relieve con luz y sombras (perfil redondeado o con arista, en su propia capa) y descarga en PNG a 300 ppp |
 | 12 láminas hilo | `laminas/hilo/NN-nombre/` | `lamina.svg`, `diseno.txt`, `ficha.txt` y `vista.png`. Resumen en `laminas/hilo/resumen.png` |
 | Maquetador | `maquetador/maquetar.py` y `maquetador/a_pdf.js` | Genera `I-clave`, `I-solucion`, `II-unidad` y `III-reticula` |
 | Maqueta aprobada del lazo de 8 | `maqueta/04-lazo-de-8/` | SVG, PNG y PDF |

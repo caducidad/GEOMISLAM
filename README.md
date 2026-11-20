@@ -15,7 +15,7 @@ El libro propone un recorrido **del muro al compás**. El lector empieza delante
 |---|---|
 | Índice del libro (100 láminas) | Definido · [`docs/indice.md`](docs/indice.md) |
 | Decisiones de enfoque | Registradas · [`docs/decisiones.md`](docs/decisiones.md) |
-| Taller de diseño (aplicación) | Funcionando, con exportación por capas · [`taller/`](taller/) |
+| Taller de diseño (aplicación) | Funcionando, con exportación por capas, relieve con luz y sombras y PNG a 300 ppp · [`taller/`](taller/) |
 | Láminas hilo | 12 elegidas y aprobadas · [`docs/laminas-hilo.md`](docs/laminas-hilo.md) |
 | Maquetador | Primera versión; formato aprobado con el lazo de 8 · [`maquetador/`](maquetador/), [`maqueta/`](maqueta/) |
 | Láminas de acompañamiento y textos | Por hacer |
@@ -46,7 +46,7 @@ El detalle está en [`docs/indice.md`](docs/indice.md).
 ## Flujo de trabajo
 
 1. **Diseñar** cada lazo en el Taller de Lacería (`taller/index.html`, se abre en cualquier navegador).
-2. **Exportar** en SVG por capas. Cada archivo lleva dentro su código de diseño (`LAC1…`) y su ficha de procedencia.
+2. **Exportar** en SVG por capas. Cada archivo lleva dentro su código de diseño (`LAC1…`) y su ficha de procedencia. También se puede descargar en PNG a 300 ppp (A4 o A3), con la ficha dentro.
 3. **Maquetar**: el maquetador lee las capas y genera las variantes de página (línea para colorear, clave de color, cuarto coloreado, unidad de repetición, punteado, construcción desde el círculo).
 
 ### Capas del SVG exportado
@@ -58,6 +58,7 @@ El detalle está en [`docs/indice.md`](docs/indice.md).
 | Pintura | Sí | Color automático o pintado a mano |
 | Retícula de construcción | Oculta salvo que se muestre | Polígonos base, agrupados por tipo (`data-tipo`) |
 | Cintas entrelazadas / Líneas | Sí | El dibujo, con el entrelazado |
+| Relieve (luces y sombras) | Solo si el relieve está activado | Brillos, sombras y sombra proyectada sobre las cintas (filtro SVG; para imprimir con relieve conviene el PNG) |
 | Piezas (datos) | Oculta | Cada pieza cerrada, con su clase de forma (`data-clase`) y su número de lados |
 | Trazado central (datos) | Oculta | Eje de cada cinta |
 | Celda que se repite (datos) | Oculta | La unidad de repetición, con sus vectores (`data-t1`, `data-t2`) |
