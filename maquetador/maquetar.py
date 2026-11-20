@@ -10,12 +10,17 @@ Lee una lámina exportada por capas con el Taller de Lacería (lamina.svg) y gen
 Uso: python3 maquetar.py <carpeta de la lámina> <carpeta de salida> "<nombre visible>"
 """
 import math, re, sys, os, html
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET, base64
+
+# Open Sans (licencia SIL OFL, ver fuentes/OFL.txt), incrustada en cada página para que el PDF use la fuente real
+_FUENTE_B64 = base64.b64encode(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fuentes', 'OpenSans-latin.woff2'), 'rb').read()).decode()
+ESTILO_FUENTE = ("<style>@font-face{font-family:'Open Sans';font-weight:300 800;"
+                 f"src:url(data:font/woff2;base64,{_FUENTE_B64}) format('woff2');}}</style>")
 
 NS = {'s': 'http://www.w3.org/2000/svg', 'i': 'http://www.inkscape.org/namespaces/inkscape'}
 K = 96 / 25.4                                   # px por mm (la escala del taller)
 TINTA, GRIS, GRIS_CLARO = '#1c1c1c', '#7a7a7a', '#c4c4c4'
-FUENTE = "'Open Sans','Noto Sans','DejaVu Sans',sans-serif"
+FUENTE = "'Open Sans',sans-serif"
 # paleta tradicional para la clave de color (de la pieza mayor a la menor)
 CLAVE = [('verde', '#1f6b55'), ('almagra', '#a8452c'), ('melado', '#d6a13f'), ('azul', '#284a7c'),
          ('negro', '#232323'), ('turquesa', '#2f8f95')]
@@ -77,7 +82,7 @@ def pagina(L, cuerpo, cabecera, pie, extra_pie=''):
     W, H, off = L['W'], L['H'], L['off']
     zona_h = L['ih'] - PIE
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 {W:.1f} {H:.1f}">'
-            f'<defs><clipPath id="zona"><rect width="{L["iw"]:.1f}" height="{zona_h:.1f}"/></clipPath></defs>'
+            f'<defs>{ESTILO_FUENTE}<clipPath id="zona"><rect width="{L["iw"]:.1f}" height="{zona_h:.1f}"/></clipPath></defs>'
             f'<rect width="{W:.1f}" height="{H:.1f}" fill="#fff"/>'
             f'<text x="{off:.1f}" y="{off - 3.2 * K:.1f}" font-family="{FUENTE}" font-size="{2.9 * K:.1f}" fill="{GRIS}">{html.escape(cabecera)}</text>'
             f'<g transform="translate({off:.1f},{off:.1f})"><g clip-path="url(#zona)">{cuerpo}</g>'

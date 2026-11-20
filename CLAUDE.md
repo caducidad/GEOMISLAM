@@ -16,6 +16,8 @@ El autor ha delegado en Claude la elección y el afinado de las láminas y la co
 - Pide la aprobación del autor en tres momentos: la selección de láminas hilo, la primera lámina completa en sus tres apariciones y el libro entero antes de maquetar.
 
 ## Criterios técnicos
+- Tipografía: Open Sans (incrustada desde `maquetador/fuentes/`, licencia SIL OFL).
+- Formato de página aprobado: el de `maqueta/04-lazo-de-8/`.
 - Formato A4 vertical, margen de 10 mm. Escala de referencia: celda de unos 62 mm (más grande en los lazos de muchas puntas).
 - Grosor mínimo de línea impresa: 0,25 mm.
 - Piezas para colorear: diámetro equivalente de 4–5 mm como mínimo.

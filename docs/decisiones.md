@@ -33,6 +33,9 @@ Todos los diseños deben ser visiblemente simétricos y previsibles: el lector t
 ## Cinta más ancha en las grandes ruedas
 Las ruedas de 16 y 20 puntas dejan astillas finísimas entre líneas. En lugar de descartarlas, la cinta se engrosa hasta taparlas, que es también la solución tradicional.
 
+## Formato de página aprobado
+El autor aprobó el formato de las tres apariciones con el lazo de 8 (`maqueta/04-lazo-de-8/`): cabecera discreta con movimiento, ejercicio y lámina; dibujo en la zona principal; pie con una instrucción breve y, si hace falta, la leyenda. Tipografía: Open Sans, la misma del cuaderno de Hamonshū, incrustada en cada página.
+
 ## Una sola página por lámina
 No hay pareja de página de referencia y página en gris. La misma lámina se aprovecha varias veces (primero la forma, luego el color). Las soluciones van en miniatura al final.
 

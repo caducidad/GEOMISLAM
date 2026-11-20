@@ -86,5 +86,4 @@ Alternativas por decidir: imprimir a doble cara los ejercicios de lápiz (unas 1
 
 ## Pendiente
 - Diseñar las láminas de acompañamiento.
-- Aprobar la primera lámina en sus tres apariciones (`maqueta/04-lazo-de-8/`).
 - Completar el maquetador con el resto de variantes.
