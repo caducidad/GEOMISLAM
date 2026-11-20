@@ -1,0 +1,182 @@
+{
+ "formato": "patron-periodico/1",
+ "id": "p06",
+ "nombre": "Estrellas de seis puntas y pentágonos",
+ "fuente": "Jules Bourgoin, Les Éléments de l'Art Arabe (1879), lámina escaneada p06.png",
+ "ejes": "x hacia la derecha, y hacia abajo (como SVG); unidad = longitud de a",
+ "celda": {
+  "a": [
+   0.866397,
+   0.499356
+  ],
+  "b": [
+   -0.865653,
+   0.500644
+  ]
+ },
+ "vertices": [
+  [
+   0.590569,
+   0.223862
+  ],
+  [
+   0.312082,
+   0.834439
+  ],
+  [
+   0.034453,
+   0.445446
+  ],
+  [
+   0.70179,
+   0.112927
+  ],
+  [
+   0.812296,
+   0.834869
+  ],
+  [
+   0.923661,
+   0.55724
+  ],
+  [
+   0.701504,
+   0.446019
+  ],
+  [
+   0.312511,
+   0.334654
+  ],
+  [
+   0.923947,
+   0.224148
+  ]
+ ],
+ "aristas": [
+  [
+   0,
+   1,
+   0,
+   -1
+  ],
+  [
+   0,
+   7,
+   0,
+   0
+  ],
+  [
+   1,
+   2,
+   0,
+   0
+  ],
+  [
+   1,
+   3,
+   0,
+   1
+  ],
+  [
+   1,
+   5,
+   -1,
+   0
+  ],
+  [
+   2,
+   7,
+   0,
+   0
+  ],
+  [
+   3,
+   4,
+   0,
+   -1
+  ],
+  [
+   4,
+   5,
+   0,
+   0
+  ],
+  [
+   4,
+   6,
+   0,
+   0
+  ],
+  [
+   4,
+   8,
+   0,
+   1
+  ],
+  [
+   6,
+   7,
+   0,
+   0
+  ],
+  [
+   7,
+   8,
+   -1,
+   0
+  ]
+ ],
+ "simetria": {
+  "orden_giro": 6,
+  "espejos_grados": [
+   0,
+   30,
+   60,
+   90,
+   120,
+   150
+  ],
+  "espejos_puros": true,
+  "grupo": "p6m"
+ },
+ "simetria_imagen": {
+  "orden_giro": 6,
+  "espejos": [
+   29.957
+  ],
+  "correlacion_giro": 0.993,
+  "correlacion_espejo": 0.995,
+  "deslizamiento": false
+ },
+ "verificacion": {
+  "lamina": "p06.png",
+  "caja_px": [
+   8,
+   8,
+   962,
+   843
+  ],
+  "a_px": [
+   191.293,
+   110.253
+  ],
+  "b_px": [
+   -191.128,
+   110.538
+  ],
+  "origen_px": [
+   484.95,
+   425.3
+  ],
+  "tinta_media_sobre_aristas": 179.54,
+  "tinta_tipica": 193.21
+ },
+ "direcciones_grados": [
+  13.836,
+  46.071,
+  73.836,
+  106.071,
+  133.836,
+  166.071
+ ]
+}

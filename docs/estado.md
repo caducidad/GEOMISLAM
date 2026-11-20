@@ -35,6 +35,7 @@ El enfoque del libro, el índice de 100 láminas y las 12 láminas hilo están d
 | Maquetador | `maquetador/maquetar.py` y `maquetador/a_pdf.js` | Genera `I-clave`, `I-solucion`, `II-unidad` y `III-reticula` |
 | Maqueta aprobada del lazo de 8 | `maqueta/04-lazo-de-8/` | SVG, PNG y PDF |
 | Herramientas | `herramientas/reexportar.js`, `herramientas/medir.py` | Reexportar láminas desde su código; medir piezas y repeticiones |
+| Reglas de Bourgoin | `reglas/bourgoin/` y en el Taller | 21 reglas exactas deducidas de las láminas de Bourgoin (1879), dibujables como lacería; p05, p07 y p09 pendientes |
 
 ## Próximos pasos, en orden
 
@@ -44,6 +45,18 @@ El enfoque del libro, el índice de 100 láminas y las 12 láminas hilo están d
 4. **Diseñar las láminas de acompañamiento** (unas 64) en el taller: parientes de las láminas hilo con otro ángulo, separación entre cintas, rosetas o doble trazo.
 5. **Textos del libro**: introducción, aperturas de los cuatro movimientos, glosario y fuentes.
 6. **Montar el libro completo** y presentarlo al autor (tercer punto de aprobación).
+
+## Unión con el proyecto de las reglas de Bourgoin (20 de noviembre de 2026)
+
+El autor tenía otro proyecto de libro, más centrado en el método de cada patrón: lecciones de 3 o 4 páginas (analizar, completar el color, completar el dibujo, construir) con las reglas exactas sacadas de las láminas de Bourgoin. Se comparan los dos enfoques para decidir cuál se sigue y qué se toma del otro.
+
+Decidido por el autor:
+- **No se nombra ningún monumento**, también en los patrones de Bourgoin (se mantiene la regla fija).
+- **Los escaneos de Bourgoin no aparecen en el libro** ni se guardan en el repositorio: solo se usan mientras se analiza cada lámina y se eliminan al terminar.
+- **Formato KDP** (20,96 × 27,94 cm en tapa dura; 21,59 × 27,94 cm en tapa blanda). El número de páginas está por decidir. El formato A4 de `CLAUDE.md` y de la maqueta del lazo de 8 habrá que adaptarlo.
+- Se toman del otro proyecto: las reglas de Bourgoin dentro del Taller (hecho), las convenciones gráficas al estilo de Broug para la construcción, los consejos del compás, las plantillas descargables por QR y la ficha técnica de KDP.
+
+Por decidir más adelante: la organización del libro (lecciones seguidas por patrón o láminas que reaparecen en los movimientos) y cuántos patrones lleva.
 
 ## Decisiones abiertas
 

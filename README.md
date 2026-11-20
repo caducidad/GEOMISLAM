@@ -15,7 +15,8 @@ El libro propone un recorrido **del muro al compás**. El lector empieza delante
 |---|---|
 | Índice del libro (100 láminas) | Definido · [`docs/indice.md`](docs/indice.md) |
 | Decisiones de enfoque | Registradas · [`docs/decisiones.md`](docs/decisiones.md) |
-| Taller de diseño (aplicación) | Funcionando, con exportación por capas, relieve con luz y sombras y PNG a 300 ppp · [`taller/`](taller/) |
+| Taller de diseño (aplicación) | Funcionando, con exportación por capas, relieve con luz y sombras, PNG a 300 ppp y 21 reglas de Bourgoin · [`taller/`](taller/) |
+| Reglas de Bourgoin (1879) | 21 de 24 verificadas e incorporadas al Taller · [`reglas/bourgoin/`](reglas/bourgoin/) |
 | Láminas hilo | 12 elegidas y aprobadas · [`docs/laminas-hilo.md`](docs/laminas-hilo.md) |
 | Maquetador | Primera versión; formato aprobado con el lazo de 8 · [`maquetador/`](maquetador/), [`maqueta/`](maqueta/) |
 | Láminas de acompañamiento y textos | Por hacer |
@@ -29,6 +30,7 @@ laminas/hilo/  Las láminas que reaparecen en los movimientos I, II y III
 maquetador/    Herramienta que convierte una lámina en todas sus páginas derivadas
 maqueta/       Páginas ya maquetadas (SVG, PNG y PDF)
 herramientas/  Reexportar láminas desde su código y medirlas
+reglas/        Reglas geométricas exactas deducidas de las láminas de Bourgoin (sin escaneos)
 docs/          Estado del proyecto, índice del libro, decisiones y criterios
 ```
 
