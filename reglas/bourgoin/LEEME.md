@@ -7,4 +7,6 @@ Cada archivo `.json` describe un patrón periódico como una celda que se repite
 - Las 21 reglas verificadas están incorporadas al Taller de Lacería (`taller/index.html`), en el grupo «Reglas de Bourgoin (1879)». Allí se dibujan como lacería entrelazada, con color por forma, relieve y exportación por capas.
 - Quedan fuera del Taller, pendientes de revisión: p05, p07 y p09.
 - **Los escaneos no se guardan en este repositorio** ni aparecen en el libro: solo se usan mientras se analiza cada lámina y se eliminan al terminar. El libro muestra trazados nuevos hechos desde la regla.
+- En el Taller, cada regla tiene su retícula de construcción (red por los centros de giro, círculos y marcas de compás e intersecciones clave). Los centros de giro se calcularon a partir de la propia regla; en p12 y p13, marcadas como «simetría sin confirmar», aparece un centro de orden 6.
+- p13 y p18 se apartan de la simetría exacta (hasta un 3 % y un 1,8 % de la celda): conviene regularizarlas.
 - Falta anotar el número de lámina de Bourgoin de cada regla (ahora se identifican como p01, p02…).

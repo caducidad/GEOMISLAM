@@ -36,6 +36,7 @@ El enfoque del libro, el índice de 100 láminas y las 12 láminas hilo están d
 | Maqueta aprobada del lazo de 8 | `maqueta/04-lazo-de-8/` | SVG, PNG y PDF |
 | Herramientas | `herramientas/reexportar.js`, `herramientas/medir.py` | Reexportar láminas desde su código; medir piezas y repeticiones |
 | Reglas de Bourgoin | `reglas/bourgoin/` y en el Taller | 21 reglas exactas deducidas de las láminas de Bourgoin (1879), dibujables como lacería; p05, p07 y p09 pendientes |
+| Retícula de construcción de las reglas | Taller, casilla «Mostrar retícula de construcción» | Al estilo de Broug: red por los centros de las estrellas (círculo dividido en doce), círculos tangentes, rejilla fina en r0–r2, y marcas: circulito donde pinchar el compás y cuadradito en cada intersección clave. Al exportar van en las capas «Retícula de construcción» y «Marcas de construcción» (`data-tipo`: red, circulos, rejilla, compas, interseccion) |
 
 ## Próximos pasos, en orden
 
@@ -55,6 +56,11 @@ Decidido por el autor:
 - **Los escaneos de Bourgoin no aparecen en el libro** ni se guardan en el repositorio: solo se usan mientras se analiza cada lámina y se eliminan al terminar.
 - **Formato KDP** (20,96 × 27,94 cm en tapa dura; 21,59 × 27,94 cm en tapa blanda). El número de páginas está por decidir. El formato A4 de `CLAUDE.md` y de la maqueta del lazo de 8 habrá que adaptarlo.
 - Se toman del otro proyecto: las reglas de Bourgoin dentro del Taller (hecho), las convenciones gráficas al estilo de Broug para la construcción, los consejos del compás, las plantillas descargables por QR y la ficha técnica de KDP.
+
+Pendiente en las reglas:
+- **Regularizar p13 y p18**: su geometría se aparta de la simetría exacta hasta 2 mm (p13, un vértice) y 1,1 mm (p18, los arcos) en una página A4 con celda de 62 mm. El resto queda por debajo de 0,25 mm. Conviene hacerlo en el proyecto de las reglas, con el escaneo y `puntuar.py`, y volver a importarlas.
+- Anotar el número de lámina de Bourgoin de cada regla, para las fichas.
+- Elegir el color definitivo de las marcas de construcción (ahora magenta, `#d6246e`), que no se confunda con los de la leyenda.
 
 Por decidir más adelante: la organización del libro (lecciones seguidas por patrón o láminas que reaparecen en los movimientos) y cuántos patrones lleva.
 
